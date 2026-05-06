@@ -1,5 +1,12 @@
 <div class="home-shell">
   <bd-side-rail>
+    <bd-icon-button
+      class="home-shell__rail-menu"
+      icon="menu"
+      ariaLabel="Toggle navigation"
+      (click)="onToggleNav()"
+      data-testid="rail-menu"
+    />
     <bd-nav-item label="Notes" icon="description" [active]="true" />
     <bd-nav-item label="Tags" icon="sell" />
     <bd-nav-item label="Recent" icon="schedule" />

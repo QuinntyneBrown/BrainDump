@@ -170,6 +170,10 @@ export class Home {
     this.loadTree();
   }
 
+  protected onToggleNav(): void {
+    // TODO: wire to layout state once a nav-collapsed signal exists
+  }
+
   protected onTopBarAction(action: BdTopAppBarAction): void {
     if (action.id === 'sign-out') {
       this.signOut();
