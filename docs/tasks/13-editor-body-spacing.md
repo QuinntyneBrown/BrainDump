@@ -1,4 +1,4 @@
-# 13 — Editor body padding 48/80 and line gap 8
+# 13 — Editor body padding 48/80 and line gap 8 ✅ Completed
 
 **Audit reference:** §4.1, §4.2
 **Design node:** `Tby2u` ("editor body") — `padding: [48, 80]`, `gap: 8`.
