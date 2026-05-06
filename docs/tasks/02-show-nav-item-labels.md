@@ -1,4 +1,4 @@
-# 02 — Show nav-item labels under icons in rail mode
+# 02 — Show nav-item labels under icons in rail mode ✅ Completed
 
 **Audit reference:** §1.2
 **Design nodes:** `pI3ZX` (Notes), `rDt7t` (Tags), `aLyQ2` (Recent), `uQ0Ue` (Settings) — all 64×64 vertical frames inside `t2jT2`.

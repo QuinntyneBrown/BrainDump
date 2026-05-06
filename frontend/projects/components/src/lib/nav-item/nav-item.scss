@@ -47,18 +47,36 @@
   }
 }
 
-// Rail mode: parent <bd-side-rail> is a 64px column, so collapse to an
-// icon-only square with the active highlight centered on the icon.
+// Rail mode: stacked icon-over-label following the M3 navigation-rail
+// convention. The active indicator pill is added in task 03.
 :host([data-rail]) {
-  width: 48px;
-  height: 48px;
+  flex-direction: column;
+  width: 64px;
+  height: 64px;
   padding: 0;
-  gap: 0;
+  gap: 4px;
   justify-content: center;
+  align-items: center;
   align-self: center;
-  border-radius: 50%;
+  border-radius: 0;
+  background: transparent;
+  font-weight: var(--bd-weight-medium);
 
   .bd-nav-item__label {
-    display: none;
+    flex: 0 0 auto;
+    font-size: var(--bd-size-label-sm);
+    font-weight: var(--bd-weight-medium);
+    color: var(--bd-color-text-secondary);
+    line-height: 1;
+  }
+}
+
+:host([data-rail][data-active='true']) {
+  // Reset the non-rail active treatment; the indicator pill (task 03)
+  // owns the highlight in rail mode.
+  background: transparent;
+
+  .bd-nav-item__label {
+    color: var(--bd-color-primary);
   }
 }
