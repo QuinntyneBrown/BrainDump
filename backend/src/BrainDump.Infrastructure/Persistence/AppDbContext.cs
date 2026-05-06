@@ -13,6 +13,7 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<Section> Sections => Set<Section>();
     public DbSet<Fact> Facts => Set<Fact>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<UserTabState> UserTabStates => Set<UserTabState>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
