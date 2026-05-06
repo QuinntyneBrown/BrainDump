@@ -43,6 +43,24 @@
       data-testid="sidebar-search"
     />
 
+    <div class="home-shell__chips" role="group" aria-label="Filter notes">
+      <bd-chip
+        [selected]="filter() === 'all'"
+        (click)="filter.set('all')"
+        data-testid="filter-all"
+      >All</bd-chip>
+      <bd-chip
+        [selected]="filter() === 'facts'"
+        (click)="filter.set('facts')"
+        data-testid="filter-facts"
+      >#facts</bd-chip>
+      <bd-chip
+        [selected]="filter() === 'wip'"
+        (click)="filter.set('wip')"
+        data-testid="filter-wip"
+      >#wip</bd-chip>
+    </div>
+
     @if (rootSections().length === 0 && !loading()) {
       <div class="home-shell__empty-aside">
         <p>No sections yet. Click + to add your first one.</p>

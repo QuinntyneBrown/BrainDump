@@ -1,18 +1,19 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { MatChip, MatChipRemove } from '@angular/material/chips';
-import { MatIcon } from '@angular/material/icon';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 @Component({
   selector: 'bd-chip',
-  imports: [MatChip, MatChipRemove, MatIcon],
   templateUrl: './chip.html',
   styleUrl: './chip.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[attr.data-selected]': 'selected()',
+    '[attr.data-disabled]': 'disabled() || null',
+    '[attr.role]': '"button"',
+    '[attr.tabindex]': 'disabled() ? -1 : 0',
+    '[attr.aria-pressed]': 'selected()',
+  },
 })
 export class BdChip {
-  readonly label = input.required<string>();
-  readonly icon = input<string | null>(null);
-  readonly removable = input(false);
+  readonly selected = input(false);
   readonly disabled = input(false);
-  readonly removed = output<void>();
 }

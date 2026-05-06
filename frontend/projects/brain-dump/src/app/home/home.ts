@@ -16,6 +16,7 @@ import {
 } from 'api';
 import {
   BdButton,
+  BdChip,
   BdConfirmDialog,
   BdConfirmDialogData,
   BdFab,
@@ -66,6 +67,7 @@ interface SectionSummary {
     BdIconButton,
     BdButton,
     BdTextField,
+    BdChip,
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss',
@@ -83,6 +85,7 @@ export class Home {
   protected readonly tree = signal<TreeDto>({ sections: [], facts: [] });
   protected readonly loading = signal(true);
   protected readonly searchQuery = signal('');
+  protected readonly filter = signal<'all' | 'facts' | 'wip'>('all');
 
   protected readonly topBarActions: readonly BdTopAppBarAction[] = [
     { id: 'search', icon: 'search', ariaLabel: 'Search notes' },

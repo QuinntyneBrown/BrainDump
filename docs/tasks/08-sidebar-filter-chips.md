@@ -1,4 +1,4 @@
-# 08 — Add filter chips row to sidebar
+# 08 — Add filter chips row to sidebar ✅ Completed
 
 **Audit reference:** §2.3
 **Design nodes:** `qAuJQ` (`dtChips`) containing `DnPbG` (All — selected, primary container), `x8wCuz` (#facts), `TSOf9` (#wip). Each is an instance of `sDkRY` (Component/Chip).

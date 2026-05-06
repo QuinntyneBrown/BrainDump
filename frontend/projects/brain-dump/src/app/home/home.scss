@@ -25,6 +25,13 @@ bd-side-rail {
   width: 100%;
 }
 
+.home-shell__chips {
+  display: flex;
+  gap: var(--bd-space-2);
+  flex-wrap: nowrap;
+  margin-bottom: var(--bd-space-2);
+}
+
 .home-shell__rail-spacer {
   flex: 1 1 auto;
 }

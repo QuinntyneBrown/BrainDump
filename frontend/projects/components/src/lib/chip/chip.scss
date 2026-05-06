@@ -1,17 +1,38 @@
 :host {
   display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 var(--bd-space-3);
+  border-radius: var(--bd-radius-full);
+  border: 1px solid var(--bd-color-border);
+  background: transparent;
+  color: var(--bd-color-text-secondary);
+  font-family: var(--bd-font-body);
+  font-size: var(--bd-size-label-md);
+  font-weight: var(--bd-weight-medium);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
 }
 
-.bd-chip {
-  --mdc-chip-container-shape-radius: var(--bd-radius-md);
-  --mdc-chip-elevated-container-color: transparent;
-  --mdc-chip-outline-color: var(--bd-color-border);
-  --mdc-chip-outline-width: 1px;
-  --mdc-chip-label-text-color: var(--bd-color-text-secondary);
-  --mdc-chip-label-text-font: var(--bd-font-body);
-  --mdc-chip-label-text-size: var(--bd-size-label-md);
-  --mdc-chip-label-text-weight: var(--bd-weight-medium);
-  --mdc-chip-container-height: 32px;
-  --mdc-chip-with-icon-icon-color: var(--bd-color-text-secondary);
-  --mdc-chip-with-icon-icon-size: 16px;
+:host(:hover) {
+  background: var(--bd-color-surface-2);
+}
+
+:host(:focus-visible) {
+  outline: 2px solid var(--bd-color-primary);
+  outline-offset: 2px;
+}
+
+:host([data-selected='true']) {
+  background: var(--bd-color-primary-container);
+  border-color: transparent;
+  color: var(--bd-color-primary);
+}
+
+:host([data-disabled]) {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
 }
