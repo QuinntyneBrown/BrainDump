@@ -246,6 +246,6 @@ Design region: `r0lBi1` ("status bar"), 32 px tall, fill `$color-surface-2`, pad
 - [x] Add Outline panel (340 px right column)
 - [x] Add Backlinks panel (below outline)
 - [x] Add status bar footer (Saved/branch + lines/encoding/Ln,Col)
-- [ ] Remove the FAB
+- [x] Remove the FAB
 - [ ] Fix editor-body background token (surface, not bg)
 - [ ] Tighten sidebar title weight to semibold + −0.5 letter-spacing

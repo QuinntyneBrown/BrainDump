@@ -1,4 +1,4 @@
-# 18 — Remove the floating action button
+# 18 — Remove the floating action button ✅ Completed
 
 **Audit reference:** §6.2
 

@@ -3,7 +3,6 @@ import { BasePage } from './base.page';
 
 export class HomePage extends BasePage {
   readonly editor: Locator;
-  readonly addSectionFab: Locator;
   readonly addSectionAside: Locator;
   readonly topBarTitle: Locator;
   readonly signOutAction: Locator;
@@ -11,7 +10,6 @@ export class HomePage extends BasePage {
   constructor(page: Page) {
     super(page);
     this.editor = page.locator('[data-testid="editor"]');
-    this.addSectionFab = page.locator('[data-testid="fab-add-section"] button');
     this.addSectionAside = page.locator('[data-testid="add-section"] button');
     this.topBarTitle = page.locator('.bd-top-app-bar__title');
     this.signOutAction = page.locator('button[aria-label="Sign out"]');
@@ -80,7 +78,7 @@ export class HomePage extends BasePage {
   }
 
   async addRootSection(title: string): Promise<void> {
-    await this.addSectionFab.click();
+    await this.addSectionAside.click();
     await this.fillPromptDialog(title);
   }
 
