@@ -26,19 +26,25 @@ az account set --subscription <your-subscription-id>
 PowerShell (Windows):
 
 ```powershell
-./infra/azure-setup.ps1
+./infra/azure-setup.ps1 -AdminEmail you@example.com -AdminPassword 'your-password'
 ```
 
 Or bash (macOS / Linux / WSL):
 
 ```bash
-./infra/azure-setup.sh
+ADMIN_EMAIL=you@example.com ADMIN_PASSWORD='your-password' ./infra/azure-setup.sh
 ```
 
-Override defaults if any names are taken:
+`AdminEmail` / `AdminPassword` configure the single-user local PKCE auth flow on the live API (`Jwt:UseLocalAuth=true`). They're stored in App Service application settings, not in source. The script also generates a random 48-character HMAC signing key and stores it the same way.
+
+Override resource names if any are taken globally:
 
 ```powershell
-./infra/azure-setup.ps1 -WebAppName braindump-api-quinn -SqlServerName braindump-sql-quinn -StaticWebAppName braindump-web-quinn
+./infra/azure-setup.ps1 `
+  -AdminEmail you@example.com -AdminPassword 'your-password' `
+  -WebAppName braindump-api-quinn `
+  -SqlServerName braindump-sql-quinn `
+  -StaticWebAppName braindump-web-quinn
 ```
 
 The script writes `infra/outputs.json` with everything you need next. **Don't commit it** — it contains the publish profile and SWA token. It is already covered by `infra/.gitignore`.
@@ -89,7 +95,7 @@ In resource group `braindump-rg` (default), region `canadacentral`:
 - **No custom-domain SSL** on F1. The SWA frontend gets free SSL on custom domains.
 - **Free SQL offer** — 100,000 vCore-seconds/month per subscription; auto-pauses afterwards. App will get a 30-second cold-start on the first request after a pause.
 - **`Database:EnsureCreatedOnStartup=true`** in `appsettings.json` bootstraps the schema on first deploy. Once you add EF migrations, replace the `EnsureCreatedAsync` call in `Program.cs` with `MigrateAsync` and flip the setting off.
-- **`Jwt:UseLocalAuth=true`** is set in App Service config so prod can boot without a real Azure AD app registration. This is the dev-mode local auth path; replace with a real IdP before exposing the app to anyone but you.
+- **`Jwt:UseLocalAuth=true`** with the single user supplied via `AdminEmail` / `AdminPassword`. This is the dev-mode local auth path; replace with a real IdP before exposing the app to anyone but you.
 
 ## Re-running
 

@@ -33,7 +33,12 @@ param(
   [string]$WebAppName        = "braindump-api",     # must be globally unique; override if taken
   [string]$StaticWebAppName  = "braindump-web",
   [string]$SqlServerName     = "braindump-sql",     # must be globally unique
-  [string]$SqlDatabaseName   = "BrainDump"
+  [string]$SqlDatabaseName   = "BrainDump",
+
+  # Production credentials for the local PKCE auth flow (Jwt:UseLocalAuth=true).
+  # Required — the AuthController has no fallback; auth will 401 until these are set.
+  [Parameter(Mandatory)] [string]$AdminEmail,
+  [Parameter(Mandatory)] [string]$AdminPassword
 )
 
 $ErrorActionPreference = "Stop"
@@ -98,12 +103,21 @@ Write-Host "Web App principalId: $webAppPrincipalId"
 # Don't auto-redirect to HTTPS at the platform level — F1 already terminates TLS.
 # Keep WEBSITES_PORT default; .NET reads ASPNETCORE_URLS from App Service.
 Step "Setting App Service config (production environment)"
+$signingBytes = New-Object byte[] 36
+[Security.Cryptography.RandomNumberGenerator]::Fill($signingBytes)
+$jwtSigningKey = [Convert]::ToBase64String($signingBytes)
+
 az webapp config appsettings set `
   --name $WebAppName `
   --resource-group $ResourceGroup `
   --settings `
     ASPNETCORE_ENVIRONMENT=Production `
     Jwt__UseLocalAuth=true `
+    Jwt__LocalAuth__DevEmail=$AdminEmail `
+    Jwt__LocalAuth__DevPassword=$AdminPassword `
+    Jwt__LocalAuth__SigningKey=$jwtSigningKey `
+    Jwt__LocalAuth__Issuer=brain-dump `
+    Jwt__LocalAuth__Audience=brain-dump `
   --output none
 
 # -----------------------------------------------------------------------------

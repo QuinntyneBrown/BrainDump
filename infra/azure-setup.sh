@@ -13,6 +13,11 @@ SWA="${SWA:-braindump-web}"
 SQL_SERVER="${SQL_SERVER:-braindump-sql}"
 SQL_DB="${SQL_DB:-BrainDump}"
 
+# Production credentials for the local PKCE auth flow (Jwt:UseLocalAuth=true).
+# Required — the AuthController has no fallback; auth will 401 until these are set.
+: "${ADMIN_EMAIL:?Set ADMIN_EMAIL (e.g. you@example.com)}"
+: "${ADMIN_PASSWORD:?Set ADMIN_PASSWORD}"
+
 step() { printf "\n==> %s\n" "$1"; }
 
 step "Checking Azure CLI login"
@@ -48,9 +53,17 @@ WEBAPP_PRINCIPAL_ID="$(az webapp identity assign \
 echo "Web App principalId: $WEBAPP_PRINCIPAL_ID"
 
 step "App Service configuration"
+JWT_SIGNING_KEY="$(openssl rand -base64 36)"
 az webapp config appsettings set \
   --name "$WEBAPP" --resource-group "$RG" \
-  --settings ASPNETCORE_ENVIRONMENT=Production Jwt__UseLocalAuth=true \
+  --settings \
+    ASPNETCORE_ENVIRONMENT=Production \
+    Jwt__UseLocalAuth=true \
+    Jwt__LocalAuth__DevEmail="$ADMIN_EMAIL" \
+    Jwt__LocalAuth__DevPassword="$ADMIN_PASSWORD" \
+    Jwt__LocalAuth__SigningKey="$JWT_SIGNING_KEY" \
+    Jwt__LocalAuth__Issuer=brain-dump \
+    Jwt__LocalAuth__Audience=brain-dump \
   --output none
 
 step "SQL Server: $SQL_SERVER"
