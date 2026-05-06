@@ -1,4 +1,4 @@
-# 04 — Add avatar at bottom of side rail
+# 04 — Add avatar at bottom of side rail ✅ Completed
 
 **Audit reference:** §1.4
 **Design nodes:** `x33bly` (flex spacer, fill_container) + `mBVXF` (40×40 ellipse, fill `$color-primary-container`).
