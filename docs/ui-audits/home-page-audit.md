@@ -239,7 +239,7 @@ Design region: `r0lBi1` ("status bar"), 32 px tall, fill `$color-surface-2`, pad
 - [x] Add filter chips row (All, #facts, #wip)
 - [x] Add document icon, tag chips, and relative-time caption to each note item
 - [x] Add `description` icon, `facts` badge, and "Edited Xm ago" caption to the editor toolbar left
-- [ ] Add visibility / history / share icon buttons + Save tonal button to toolbar right
+- [x] Add visibility / history / share icon buttons + Save tonal button to toolbar right
 - [ ] Add 1 px divider under toolbar; remove toolbar fill
 - [ ] Increase editor body padding to 48 / 80 and line gap to 8 px
 - [ ] Style heading markdown lines (#, ##) with primary blue tint and larger size

@@ -1,12 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatIcon } from '@angular/material/icon';
 import { Observable } from 'rxjs';
 import {
-  AUTH_SERVICE,
   FACTS_SERVICE,
   FactDto,
   SECTIONS_SERVICE,
@@ -75,11 +73,9 @@ interface SectionSummary {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Home {
-  private readonly authService = inject(AUTH_SERVICE);
   private readonly treeService = inject(TREE_SERVICE);
   private readonly sectionsService = inject(SECTIONS_SERVICE);
   private readonly factsService = inject(FACTS_SERVICE);
-  private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly snackbar = inject(MatSnackBar);
 
@@ -96,8 +92,9 @@ export class Home {
   });
 
   protected readonly topBarActions: readonly BdTopAppBarAction[] = [
-    { id: 'search', icon: 'search', ariaLabel: 'Search notes' },
-    { id: 'sign-out', icon: 'logout', ariaLabel: 'Sign out' },
+    { id: 'preview', icon: 'visibility', ariaLabel: 'Toggle preview' },
+    { id: 'history', icon: 'history',    ariaLabel: 'View history' },
+    { id: 'share',   icon: 'share',      ariaLabel: 'Share' },
   ];
 
   protected readonly rootSections = computed<SectionSummary[]>(() => {
@@ -188,9 +185,15 @@ export class Home {
   }
 
   protected onTopBarAction(action: BdTopAppBarAction): void {
-    if (action.id === 'sign-out') {
-      this.signOut();
-    }
+    // TODO: wire preview / history / share once the matching surfaces exist.
+    // Sign-out has moved out of the toolbar; surface it from the avatar menu
+    // (rail) when that menu is wired up.
+    void action;
+  }
+
+  protected onSave(): void {
+    this.lastModifiedAt.set(Date.now());
+    this.toast('Saved');
   }
 
   protected onAddRootSection(): void {
@@ -322,11 +325,6 @@ export class Home {
         error: () => this.toast('Failed to delete fact'),
       });
     });
-  }
-
-  protected signOut(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
   }
 
   private loadTree(): void {

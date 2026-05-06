@@ -1,4 +1,4 @@
-# 11 — Toolbar right: visibility / history / share + Save tonal button
+# 11 — Toolbar right: visibility / history / share + Save tonal button ✅ Completed
 
 **Audit reference:** §3.2
 **Design nodes:** `eWRGZ` ("dtBarRight") containing:

@@ -89,7 +89,16 @@
       [caption]="lastEditedCaption()"
       [actions]="topBarActions"
       (actionClick)="onTopBarAction($event)"
-    />
+    >
+      <bd-button
+        bdTopAppBarTrailing
+        variant="tonal"
+        (click)="onSave()"
+        data-testid="save-document"
+      >
+        Save
+      </bd-button>
+    </bd-top-app-bar>
 
     <div class="home-shell__editor-body" data-testid="editor">
       @if (loading()) {
