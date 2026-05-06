@@ -47,8 +47,16 @@
   }
 }
 
+// In the non-rail (list) variant the indicator wrapper is invisible —
+// the icon rides directly on the host's pill background.
+.bd-nav-item__indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 // Rail mode: stacked icon-over-label following the M3 navigation-rail
-// convention. The active indicator pill is added in task 03.
+// convention. The indicator wrapper carries the active highlight pill.
 :host([data-rail]) {
   flex-direction: column;
   width: 64px;
@@ -62,6 +70,13 @@
   background: transparent;
   font-weight: var(--bd-weight-medium);
 
+  .bd-nav-item__indicator {
+    width: 56px;
+    height: 32px;
+    border-radius: var(--bd-radius-xl);
+    transition: background-color 120ms ease;
+  }
+
   .bd-nav-item__label {
     flex: 0 0 auto;
     font-size: var(--bd-size-label-sm);
@@ -69,12 +84,28 @@
     color: var(--bd-color-text-secondary);
     line-height: 1;
   }
+
+  &:hover {
+    background: transparent;
+
+    .bd-nav-item__indicator {
+      background: var(--bd-color-surface-2);
+    }
+  }
 }
 
 :host([data-rail][data-active='true']) {
-  // Reset the non-rail active treatment; the indicator pill (task 03)
-  // owns the highlight in rail mode.
+  // Reset the non-rail active treatment; the indicator pill owns the
+  // highlight in rail mode.
   background: transparent;
+
+  .bd-nav-item__indicator {
+    background: var(--bd-color-primary-container);
+  }
+
+  .bd-nav-item__icon {
+    color: var(--bd-color-primary);
+  }
 
   .bd-nav-item__label {
     color: var(--bd-color-primary);

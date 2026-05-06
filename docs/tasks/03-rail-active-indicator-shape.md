@@ -1,4 +1,4 @@
-# 03 — Rail active indicator: rounded square, not circle
+# 03 — Rail active indicator: rounded square, not circle ✅ Completed
 
 **Audit reference:** §1.3
 **Design nodes:** active item `pI3ZX` — `cornerRadius: $radius-xl` on a fill `$color-primary-container`. The pill wraps only the **icon row**, not the label.
