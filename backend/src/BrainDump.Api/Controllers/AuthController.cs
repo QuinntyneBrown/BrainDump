@@ -1,8 +1,11 @@
+using BrainDump.Application.Interfaces;
+using BrainDump.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Globalization;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -16,11 +19,19 @@ public class AuthController : ControllerBase
 {
     private readonly IMemoryCache _cache;
     private readonly IConfiguration _config;
+    private readonly IUserRepository _users;
+    private readonly IPasswordHasher _hasher;
 
-    public AuthController(IMemoryCache cache, IConfiguration config)
+    public AuthController(
+        IMemoryCache cache,
+        IConfiguration config,
+        IUserRepository users,
+        IPasswordHasher hasher)
     {
         _cache = cache;
         _config = config;
+        _users = users;
+        _hasher = hasher;
     }
 
     public record AuthorizeRequest(
@@ -44,17 +55,18 @@ public class AuthController : ControllerBase
     private record PendingAuth(string Email, string CodeChallenge);
 
     [HttpPost("authorize")]
-    public ActionResult<AuthorizeResponse> Authorize([FromBody] AuthorizeRequest request)
+    public async Task<ActionResult<AuthorizeResponse>> Authorize(
+        [FromBody] AuthorizeRequest request,
+        CancellationToken ct)
     {
         // L2-031 #5: when local sign-in is disabled, the endpoint must be absent
         // (404), not return 401, so callers can tell "feature off" from "wrong creds".
         if (!_config.GetValue<bool>("Jwt:UseLocalAuth")) return NotFound();
 
-        var devEmail = _config["Jwt:LocalAuth:DevEmail"];
-        var devPassword = _config["Jwt:LocalAuth:DevPassword"];
-
-        if (!string.Equals(request.Email, devEmail, StringComparison.OrdinalIgnoreCase)
-            || request.Password != devPassword)
+        var user = await _users.FindByEmailAsync(request.Email, ct);
+        if (user is null
+            || user.PasswordHash is null
+            || !_hasher.Verify(user.PasswordHash, request.Password))
         {
             return Unauthorized(new { message = "Invalid credentials." });
         }
@@ -63,13 +75,15 @@ public class AuthController : ControllerBase
             return BadRequest(new { message = "Only S256 code_challenge_method is supported." });
 
         var code = Guid.NewGuid().ToString("N");
-        _cache.Set(code, new PendingAuth(request.Email, request.CodeChallenge), TimeSpan.FromMinutes(5));
+        _cache.Set(code, new PendingAuth(user.Email, request.CodeChallenge), TimeSpan.FromMinutes(5));
 
         return Ok(new AuthorizeResponse(code));
     }
 
     [HttpPost("token")]
-    public ActionResult<TokenResponse> Token([FromBody] TokenRequest request)
+    public async Task<ActionResult<TokenResponse>> Token(
+        [FromBody] TokenRequest request,
+        CancellationToken ct)
     {
         if (!_config.GetValue<bool>("Jwt:UseLocalAuth")) return NotFound();
 
@@ -85,10 +99,13 @@ public class AuthController : ControllerBase
         if (computed != pending.CodeChallenge)
             return Unauthorized(new { message = "Code verifier does not match." });
 
-        return Ok(new TokenResponse(GenerateJwt(pending.Email), "Bearer", 3600));
+        var user = await _users.FindByEmailAsync(pending.Email, ct);
+        if (user is null) return Unauthorized(new { message = "Invalid or expired code." });
+
+        return Ok(new TokenResponse(GenerateJwt(user), "Bearer", 3600));
     }
 
-    private string GenerateJwt(string email)
+    private string GenerateJwt(User user)
     {
         var signingKey = _config["Jwt:LocalAuth:SigningKey"]!;
         var issuer = _config["Jwt:LocalAuth:Issuer"]!;
@@ -101,8 +118,10 @@ public class AuthController : ControllerBase
             issuer: issuer,
             audience: audience,
             claims: [
-                new Claim(ClaimTypes.Email, email),
-                new Claim(ClaimTypes.NameIdentifier, email)
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString(CultureInfo.InvariantCulture)),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString(CultureInfo.InvariantCulture))
             ],
             expires: DateTime.UtcNow.AddHours(1),
             signingCredentials: creds);

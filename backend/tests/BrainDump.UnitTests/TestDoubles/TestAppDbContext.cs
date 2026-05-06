@@ -13,6 +13,7 @@ public class TestAppDbContext : DbContext, IAppDbContext
 
     public DbSet<Section> Sections => Set<Section>();
     public DbSet<Fact> Facts => Set<Fact>();
+    public DbSet<User> Users => Set<User>();
 
     public static TestAppDbContext CreateInMemory()
     {

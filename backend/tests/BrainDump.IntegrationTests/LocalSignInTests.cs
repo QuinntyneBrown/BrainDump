@@ -180,30 +180,38 @@ public class LocalSignInTests
         Assert.Equal(HttpStatusCode.NotFound, token.StatusCode);
     }
 
-    private static EnvScope LocalAuthEnabledEnv() => new(new()
+    private static TestScope LocalAuthEnabledEnv()
     {
-        ["ASPNETCORE_ENVIRONMENT"] = "Development",
-        ["Jwt__UseLocalAuth"] = "true",
-        ["Jwt__LocalAuth__SigningKey"] = "test-signing-key-must-be-at-least-32-chars!!",
-        ["Jwt__LocalAuth__Issuer"] = "test-issuer",
-        ["Jwt__LocalAuth__Audience"] = "test-audience",
-        ["Jwt__LocalAuth__DevEmail"] = DevEmail,
-        ["Jwt__LocalAuth__DevPassword"] = DevPassword,
-        ["ConnectionStrings__DefaultConnection"] = "Data Source=:memory:",
-        ["Database__Provider"] = "Sqlite",
-        ["Database__EnsureCreatedOnStartup"] = "false",
-    });
+        var dbFile = Path.Combine(Path.GetTempPath(), $"braindump-test-{Guid.NewGuid():N}.db");
+        return new TestScope(dbFile, new()
+        {
+            ["ASPNETCORE_ENVIRONMENT"] = "Development",
+            ["Jwt__UseLocalAuth"] = "true",
+            ["Jwt__LocalAuth__SigningKey"] = "test-signing-key-must-be-at-least-32-chars!!",
+            ["Jwt__LocalAuth__Issuer"] = "test-issuer",
+            ["Jwt__LocalAuth__Audience"] = "test-audience",
+            ["Jwt__LocalAuth__DevEmail"] = DevEmail,
+            ["Jwt__LocalAuth__DevPassword"] = DevPassword,
+            ["ConnectionStrings__DefaultConnection"] = $"Data Source={dbFile}",
+            ["Database__Provider"] = "Sqlite",
+            ["Database__EnsureCreatedOnStartup"] = "true",
+        });
+    }
 
-    private static EnvScope LocalAuthDisabledEnv() => new(new()
+    private static TestScope LocalAuthDisabledEnv()
     {
-        ["ASPNETCORE_ENVIRONMENT"] = "Development",
-        ["Jwt__UseLocalAuth"] = "false",
-        ["Jwt__Authority"] = "https://login.example/v2.0",
-        ["Jwt__Audience"] = "test",
-        ["ConnectionStrings__DefaultConnection"] = "Data Source=:memory:",
-        ["Database__Provider"] = "Sqlite",
-        ["Database__EnsureCreatedOnStartup"] = "false",
-    });
+        var dbFile = Path.Combine(Path.GetTempPath(), $"braindump-test-{Guid.NewGuid():N}.db");
+        return new TestScope(dbFile, new()
+        {
+            ["ASPNETCORE_ENVIRONMENT"] = "Development",
+            ["Jwt__UseLocalAuth"] = "false",
+            ["Jwt__Authority"] = "https://login.example/v2.0",
+            ["Jwt__Audience"] = "test",
+            ["ConnectionStrings__DefaultConnection"] = $"Data Source={dbFile}",
+            ["Database__Provider"] = "Sqlite",
+            ["Database__EnsureCreatedOnStartup"] = "true",
+        });
+    }
 
     private static (string Verifier, string Challenge) NewPkcePair()
     {
@@ -216,12 +224,14 @@ public class LocalSignInTests
     private static string Base64Url(byte[] bytes) =>
         Convert.ToBase64String(bytes).TrimEnd('=').Replace('+', '-').Replace('/', '_');
 
-    private sealed class EnvScope : IDisposable
+    private sealed class TestScope : IDisposable
     {
         private readonly Dictionary<string, string?> _previous = new();
+        private readonly string _dbFile;
 
-        public EnvScope(Dictionary<string, string?> values)
+        public TestScope(string dbFile, Dictionary<string, string?> values)
         {
+            _dbFile = dbFile;
             foreach (var (key, value) in values)
             {
                 _previous[key] = Environment.GetEnvironmentVariable(key);
@@ -233,6 +243,12 @@ public class LocalSignInTests
         {
             foreach (var (key, value) in _previous)
                 Environment.SetEnvironmentVariable(key, value);
+
+            // Sqlite holds onto file handles via its connection pool; clear them
+            // so the temp DB file can be deleted on Windows.
+            Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+
+            try { if (File.Exists(_dbFile)) File.Delete(_dbFile); } catch { }
         }
     }
 }

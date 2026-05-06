@@ -7,5 +7,6 @@ public interface IAppDbContext
 {
     DbSet<Section> Sections { get; }
     DbSet<Fact> Facts { get; }
+    DbSet<User> Users { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

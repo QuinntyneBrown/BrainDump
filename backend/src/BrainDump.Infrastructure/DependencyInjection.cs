@@ -1,4 +1,5 @@
 using BrainDump.Application.Interfaces;
+using BrainDump.Infrastructure.Auth;
 using BrainDump.Infrastructure.Persistence;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -39,6 +40,9 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IAppDbContext>(sp => sp.GetRequiredService<AppDbContext>());
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddSingleton<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<ICurrentUser, CurrentUserAccessor>();
 
         return services;
     }

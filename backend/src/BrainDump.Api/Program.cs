@@ -1,5 +1,7 @@
+using BrainDump.Api.Auth;
 using BrainDump.Api.Middleware;
 using BrainDump.Application.Features.Tree;
+using BrainDump.Application.Interfaces;
 using BrainDump.Infrastructure;
 using BrainDump.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -78,6 +80,11 @@ builder.Services
             options.Authority = builder.Configuration["Jwt:Authority"];
             options.Audience = builder.Configuration["Jwt:Audience"];
         }
+
+        // Bootstrap a `user` row for every authenticated principal (local-auth and
+        // Entra alike) so handlers can attribute work via ICurrentUser.
+        options.Events ??= new JwtBearerEvents();
+        options.Events.OnTokenValidated = UserBootstrapHandler.OnTokenValidated;
     });
 
 builder.Services.AddAuthorization();
@@ -114,6 +121,9 @@ if (app.Configuration.GetValue<bool>("Database:EnsureCreatedOnStartup"))
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await db.Database.EnsureCreatedAsync();
+
+    var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+    await LocalDevUserSeeder.SeedAsync(db, hasher, app.Configuration);
 }
 
 app.Run();
