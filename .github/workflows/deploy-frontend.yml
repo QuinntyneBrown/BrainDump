@@ -43,6 +43,9 @@ jobs:
           sed -i "s|__API_BASE_URL__|$API_BASE_URL|g" \
             projects/brain-dump/src/environments/environment.prod.ts
 
+      - name: Build components library
+        run: npx ng build components --configuration=production
+
       - name: Build api library
         run: npx ng build api --configuration=production
 

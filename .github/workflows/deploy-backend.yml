@@ -14,7 +14,7 @@ concurrency:
 
 env:
   DOTNET_VERSION: '9.0.x'
-  WEBAPP_NAME: braindump-api
+  WEBAPP_NAME: braindump-api-qbrown
   PROJECT_PATH: backend/src/BrainDump.Api/BrainDump.Api.csproj
   PUBLISH_DIR: backend/publish
 
