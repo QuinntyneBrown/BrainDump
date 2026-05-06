@@ -86,7 +86,10 @@ az sql db create \
   --compute-model Serverless --backup-storage-redundancy Local \
   --output none
 
-CONN="Server=tcp:${SQL_SERVER}.database.windows.net,1433;Database=${SQL_DB};Authentication=Active Directory Default;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+# No `Authentication=...` clause: the API's UseAzureSqlAuthentication extension
+# attaches an AccessTokenCallback via DefaultAzureCredential, and SqlClient
+# rejects setting the callback when Authentication is also specified.
+CONN="Server=tcp:${SQL_SERVER}.database.windows.net,1433;Database=${SQL_DB};Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
 step "ConnectionStrings:DefaultConnection on Web App"
 az webapp config connection-string set \
   --name "$WEBAPP" --resource-group "$RG" \

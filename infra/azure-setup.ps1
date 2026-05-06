@@ -166,7 +166,10 @@ az sql db create `
 # -----------------------------------------------------------------------------
 # 6. Connection string on the Web App (passwordless, MI auth)
 # -----------------------------------------------------------------------------
-$connString = "Server=tcp:$SqlServerName.database.windows.net,1433;Database=$SqlDatabaseName;Authentication=Active Directory Default;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+# No `Authentication=...` clause: the API's UseAzureSqlAuthentication extension
+# attaches an AccessTokenCallback via DefaultAzureCredential, and SqlClient
+# rejects setting the callback when Authentication is also specified.
+$connString = "Server=tcp:$SqlServerName.database.windows.net,1433;Database=$SqlDatabaseName;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
 Step "Setting ConnectionStrings:DefaultConnection on Web App"
 az webapp config connection-string set `
   --name $WebAppName `
