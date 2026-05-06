@@ -33,4 +33,4 @@ Each markdown file in this folder describes a single discrete UI change derived 
 17. [Status bar footer](17-status-bar.md) ✅
 18. [Remove the FAB](18-remove-fab.md) ✅
 19. [Fix editor-body background token](19-editor-body-background.md) ✅
-20. [Tighten sidebar title weight + letter spacing](20-sidebar-title-typography.md)
+20. [Tighten sidebar title weight + letter spacing](20-sidebar-title-typography.md) ✅

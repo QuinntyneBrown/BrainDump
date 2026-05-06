@@ -248,4 +248,4 @@ Design region: `r0lBi1` ("status bar"), 32 px tall, fill `$color-surface-2`, pad
 - [x] Add status bar footer (Saved/branch + lines/encoding/Ln,Col)
 - [x] Remove the FAB
 - [x] Fix editor-body background token (surface, not bg)
-- [ ] Tighten sidebar title weight to semibold + −0.5 letter-spacing
+- [x] Tighten sidebar title weight to semibold + −0.5 letter-spacing

@@ -1,4 +1,4 @@
-# 20 — Tighten sidebar title weight + letter spacing
+# 20 — Tighten sidebar title weight + letter spacing ✅ Completed
 
 **Audit reference:** §8.1
 **Design node:** `bWjsN` — "Notes" headline. `$font-display`, `$size-headline-sm`, `$weight-semibold`, `letterSpacing: -0.5`.

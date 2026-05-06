@@ -22,7 +22,8 @@
 .bd-sidebar__title {
   font-family: var(--bd-font-display);
   font-size: var(--bd-size-headline-sm);
-  font-weight: var(--bd-weight-bold);
+  font-weight: var(--bd-weight-semibold);
+  letter-spacing: -0.5px;
   color: var(--bd-color-text-primary);
   margin: 0;
 }
