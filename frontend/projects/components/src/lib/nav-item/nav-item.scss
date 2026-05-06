@@ -46,3 +46,19 @@
     color: var(--bd-color-primary);
   }
 }
+
+// Rail mode: parent <bd-side-rail> is a 64px column, so collapse to an
+// icon-only square with the active highlight centered on the icon.
+:host([data-rail]) {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  gap: 0;
+  justify-content: center;
+  align-self: center;
+  border-radius: 50%;
+
+  .bd-nav-item__label {
+    display: none;
+  }
+}
