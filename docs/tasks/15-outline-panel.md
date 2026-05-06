@@ -1,4 +1,4 @@
-# 15 — Outline panel (right column)
+# 15 — Outline panel (right column) ✅ Completed
 
 **Audit reference:** §5
 **Design nodes:** `wAvSZ` (right rail container, 340 wide, padding 32, gap `$space-4`); `lgz1T` ("OUTLINE" label); `O0yO0R` (`dtOL`) → 4 row instances `LiLtv`, `K5d1OS`, `ieBbd`, `I7IrP`.

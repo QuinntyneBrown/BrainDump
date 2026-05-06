@@ -155,6 +155,15 @@
       />
     </div>
   </main>
+
+  <aside class="home-shell__right-rail">
+    <bd-outline
+      [entries]="outlineEntries()"
+      [activeId]="activeOutlineId()"
+      (entryClick)="onOutlineClick($event)"
+      data-testid="outline"
+    />
+  </aside>
 </div>
 
 <mat-menu #sectionMenu="matMenu">

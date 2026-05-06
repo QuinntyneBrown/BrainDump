@@ -1,0 +1,15 @@
+<h3 class="bd-outline__heading">OUTLINE</h3>
+<nav class="bd-outline__list">
+  @for (e of entries(); track e.id) {
+    <button
+      type="button"
+      class="bd-outline__row"
+      [attr.data-active]="e.id === activeId()"
+      [attr.data-level]="e.level"
+      (click)="entryClick.emit(e)"
+    >
+      <mat-icon class="bd-outline__icon">tag</mat-icon>
+      <span class="bd-outline__label">{{ e.label }}</span>
+    </button>
+  }
+</nav>

@@ -22,6 +22,8 @@ import {
   BdMonacoLine,
   BdNavItem,
   BdNoteItem,
+  BdOutline,
+  BdOutlineEntry,
   BdPromptDialog,
   BdPromptDialogData,
   BdSideRail,
@@ -68,6 +70,7 @@ interface SectionSummary {
     BdButton,
     BdTextField,
     BdChip,
+    BdOutline,
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss',
@@ -91,6 +94,18 @@ export class Home {
     if (ts === null) return null;
     return `Edited ${formatRelativeTime(Date.now() - ts)}`;
   });
+
+  protected readonly outlineEntries = computed<readonly BdOutlineEntry[]>(() => {
+    return this.lines()
+      .filter(l => l.kind === 'section' && l.sectionId !== undefined)
+      .map<BdOutlineEntry>(l => ({
+        id: l.sectionId!,
+        label: this.tree().sections.find(s => s.id === l.sectionId)?.title ?? '',
+        level: clampLevel((l.depth ?? 0) + 1),
+      }));
+  });
+
+  protected readonly activeOutlineId = signal<number | null>(null);
 
   protected readonly topBarActions: readonly BdTopAppBarAction[] = [
     { id: 'preview', icon: 'visibility', ariaLabel: 'Toggle preview' },
@@ -181,6 +196,15 @@ export class Home {
 
   constructor() {
     this.loadTree();
+  }
+
+  protected onOutlineClick(entry: BdOutlineEntry): void {
+    const id = typeof entry.id === 'number' ? entry.id : Number(entry.id);
+    if (Number.isNaN(id)) return;
+    const target = document.querySelector<HTMLElement>(`[data-section-id="${id}"]`);
+    if (!target) return;
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    this.activeOutlineId.set(id);
   }
 
   protected onToggleNav(): void {
@@ -392,6 +416,12 @@ export class Home {
       duration: 3000,
     });
   }
+}
+
+function clampLevel(n: number): 1 | 2 | 3 {
+  if (n <= 1) return 1;
+  if (n >= 3) return 3;
+  return 2;
 }
 
 function formatRelativeTime(diffMs: number): string {

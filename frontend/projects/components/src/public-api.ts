@@ -16,6 +16,7 @@ export * from './lib/list-item/list-item';
 export * from './lib/monaco-line/monaco-line';
 export * from './lib/nav-item/nav-item';
 export * from './lib/note-item/note-item';
+export * from './lib/outline/outline';
 export * from './lib/prompt-dialog/prompt-dialog';
 export * from './lib/side-rail/side-rail';
 export * from './lib/sidebar/sidebar';
