@@ -26,6 +26,8 @@
 [CmdletBinding()]
 param(
   [string]$Location          = "canadacentral",
+  # SWA control plane is not in canadacentral; centralus is the closest region it offers.
+  [string]$StaticWebAppLocation = "centralus",
   [string]$ResourceGroup     = "braindump-rg",
   [string]$AppServicePlan    = "braindump-plan",
   [string]$WebAppName        = "braindump-api",     # must be globally unique; override if taken
@@ -166,11 +168,11 @@ az webapp config connection-string set `
 # -----------------------------------------------------------------------------
 # 7. Static Web App (Free tier)
 # -----------------------------------------------------------------------------
-Step "Static Web App: $StaticWebAppName (Free)"
+Step "Static Web App: $StaticWebAppName (Free, $StaticWebAppLocation)"
 az staticwebapp create `
   --name $StaticWebAppName `
   --resource-group $ResourceGroup `
-  --location $Location `
+  --location $StaticWebAppLocation `
   --sku Free `
   --output none
 

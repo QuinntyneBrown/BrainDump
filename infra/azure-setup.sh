@@ -4,6 +4,8 @@
 set -euo pipefail
 
 LOCATION="${LOCATION:-canadacentral}"
+# SWA control plane is not in canadacentral; centralus is the closest region it offers.
+SWA_LOCATION="${SWA_LOCATION:-centralus}"
 RG="${RG:-braindump-rg}"
 PLAN="${PLAN:-braindump-plan}"
 WEBAPP="${WEBAPP:-braindump-api}"
@@ -82,9 +84,9 @@ az webapp config connection-string set \
   --settings DefaultConnection="$CONN" \
   --output none
 
-step "Static Web App: $SWA (Free)"
+step "Static Web App: $SWA (Free, $SWA_LOCATION)"
 az staticwebapp create \
-  --name "$SWA" --resource-group "$RG" --location "$LOCATION" \
+  --name "$SWA" --resource-group "$RG" --location "$SWA_LOCATION" \
   --sku Free --output none
 
 FRONTEND_URL="https://$(az staticwebapp show --name "$SWA" --resource-group "$RG" --query defaultHostname --output tsv)"
