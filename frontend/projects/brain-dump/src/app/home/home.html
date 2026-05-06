@@ -7,7 +7,7 @@
       (click)="onToggleNav()"
       data-testid="rail-menu"
     />
-    <bd-nav-item label="Notes" icon="description" [active]="true" />
+    <bd-nav-item label="Pages" icon="description" [active]="true" />
     <bd-nav-item label="Tags" icon="sell" />
     <bd-nav-item label="Recent" icon="schedule" />
     <bd-nav-item label="Settings" icon="settings" />
@@ -21,14 +21,20 @@
     ></div>
   </bd-side-rail>
 
-  <bd-sidebar heading="Notes">
+  <bd-sidebar heading="Pages">
     <ng-container bdSidebarHeaderActions>
+      <bd-icon-button
+        icon="create_new_folder"
+        ariaLabel="Add folder"
+        (click)="onAddRootFolder()"
+        data-testid="add-folder"
+      />
       <bd-button
         variant="tonal"
         icon="add"
-        ariaLabel="Add section"
-        (click)="onAddRootSection()"
-        data-testid="add-section"
+        ariaLabel="Add document"
+        (click)="onAddRootDocument()"
+        data-testid="add-document"
       >
         New
       </bd-button>
@@ -37,13 +43,13 @@
     <bd-text-field
       class="home-shell__search"
       type="search"
-      placeholder="Search notes…"
+      placeholder="Search pages…"
       leadingIcon="search"
       [(value)]="searchQuery"
       data-testid="sidebar-search"
     />
 
-    <div class="home-shell__chips" role="group" aria-label="Filter notes">
+    <div class="home-shell__chips" role="group" aria-label="Filter pages">
       <bd-chip
         [selected]="filter() === 'all'"
         (click)="filter.set('all')"
@@ -61,31 +67,20 @@
       >#wip</bd-chip>
     </div>
 
-    @if (rootSections().length === 0 && !loading()) {
-      <div class="home-shell__empty-aside">
-        <p>No sections yet. Click + to add your first one.</p>
-      </div>
-    }
-
-    @for (s of rootSections(); track s.section.id) {
-      <bd-note-item
-        [title]="s.section.title"
-        [preview]="s.preview"
-        [meta]="s.meta"
-        [tags]="s.tags"
-        icon="description"
-        [active]="false"
-        [attr.data-testid]="'sidebar-section-' + s.section.id"
-      />
-    }
+    <bd-page-tree
+      [folders]="workspace().folders"
+      [documents]="workspace().documents"
+      [activeDocumentId]="activeDocumentId()"
+      (documentSelected)="onDocumentSelected($event)"
+      data-testid="page-tree"
+    />
   </bd-sidebar>
 
   <main class="home-shell__editor">
     <bd-top-app-bar
-      title="brain-dump.md"
+      [title]="editorTitle()"
       [leadingIcon]="null"
       decorativeIcon="description"
-      badge="facts"
       [caption]="lastEditedCaption()"
       [actions]="topBarActions"
       (actionClick)="onTopBarAction($event)"
@@ -103,11 +98,25 @@
     <div class="home-shell__editor-body" data-testid="editor">
       @if (loading()) {
         <p class="home-shell__loading">Loading…</p>
+      } @else if (activeDocumentId() === null) {
+        <div class="home-shell__empty-editor">
+          <mat-icon>edit_note</mat-icon>
+          <h2>No document open</h2>
+          <p>Pick a document from the page tree, or create a new one.</p>
+        </div>
       } @else if (lines().length === 0) {
         <div class="home-shell__empty-editor">
           <mat-icon>edit_note</mat-icon>
-          <h2>Your brain-dump is empty</h2>
+          <h2>This document is empty</h2>
           <p>Create your first section to get started.</p>
+          <bd-button
+            variant="tonal"
+            icon="add"
+            (click)="onAddRootSection()"
+            data-testid="empty-add-section"
+          >
+            Add section
+          </bd-button>
         </div>
       } @else {
         @for (line of lines(); track line.lineNumber) {

@@ -6,13 +6,25 @@ export * from './lib/models/section.dto';
 export * from './lib/models/fact.dto';
 export * from './lib/models/tree.dto';
 export * from './lib/models/reorder-item';
+export * from './lib/models/folder.dto';
+export * from './lib/models/document.dto';
+export * from './lib/models/workspace.dto';
 
 export * from './lib/auth/auth.service.contract';
 export * from './lib/auth/auth.service';
 export * from './lib/auth/auth.interceptor';
 
-export * from './lib/tree/tree.service.contract';
-export * from './lib/tree/tree.service';
+export * from './lib/workspace/workspace.service.contract';
+export * from './lib/workspace/workspace.service';
+
+export * from './lib/documents/documents.service.contract';
+export * from './lib/documents/documents.service';
+
+export * from './lib/folders/folders.service.contract';
+export * from './lib/folders/folders.service';
+
+export * from './lib/move/move.service.contract';
+export * from './lib/move/move.service';
 
 export * from './lib/sections/sections.service.contract';
 export * from './lib/sections/sections.service';

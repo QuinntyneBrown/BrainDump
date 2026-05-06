@@ -2,6 +2,7 @@ import { InjectionToken } from '@angular/core';
 import { Observable } from 'rxjs';
 
 export interface CreateSectionRequest {
+  documentId: number;
   parentId: number | null;
   title: string;
   position: number;

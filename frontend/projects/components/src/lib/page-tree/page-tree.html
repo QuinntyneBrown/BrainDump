@@ -1,0 +1,31 @@
+<nav class="bd-page-tree">
+  @for (node of nodes(); track node.id + ':' + node.kind) {
+    @if (isFolder(node)) {
+      <button
+        type="button"
+        class="bd-page-tree__row bd-page-tree__row--folder"
+        [style.padding-left]="indentPadding(node.depth)"
+        (click)="onFolderClick(node.id)"
+      >
+        <mat-icon class="bd-page-tree__chevron">{{ isCollapsed(node.id) ? 'chevron_right' : 'keyboard_arrow_down' }}</mat-icon>
+        <mat-icon class="bd-page-tree__icon">folder</mat-icon>
+        <span class="bd-page-tree__label">{{ node.title }}</span>
+      </button>
+    } @else {
+      <button
+        type="button"
+        class="bd-page-tree__row bd-page-tree__row--document"
+        [attr.data-active]="node.id === activeDocumentId()"
+        [attr.data-document-id]="node.id"
+        [style.padding-left]="indentPadding(node.depth + 1)"
+        (click)="onDocumentClick(node.id)"
+      >
+        <mat-icon class="bd-page-tree__icon">description</mat-icon>
+        <span class="bd-page-tree__label">{{ node.title }}</span>
+      </button>
+    }
+  }
+  @if (!nodes().length) {
+    <p class="bd-page-tree__empty">No pages yet.</p>
+  }
+</nav>

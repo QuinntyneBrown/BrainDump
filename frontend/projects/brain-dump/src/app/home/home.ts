@@ -1,16 +1,21 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatIcon } from '@angular/material/icon';
 import { Observable } from 'rxjs';
 import {
+  DOCUMENTS_SERVICE,
+  DocumentDto,
   FACTS_SERVICE,
   FactDto,
+  FOLDERS_SERVICE,
+  FolderDto,
   SECTIONS_SERVICE,
   SectionDto,
-  TREE_SERVICE,
   TreeDto,
+  WORKSPACE_SERVICE,
+  WorkspaceDto,
 } from 'api';
 import {
   BdBacklinkEntry,
@@ -22,9 +27,9 @@ import {
   BdIconButton,
   BdMonacoLine,
   BdNavItem,
-  BdNoteItem,
   BdOutline,
   BdOutlineEntry,
+  BdPageTree,
   BdPromptDialog,
   BdPromptDialogData,
   BdSideRail,
@@ -48,13 +53,6 @@ interface RenderedLine {
   readonly level?: 0 | 1 | 2 | 3;
 }
 
-interface SectionSummary {
-  readonly section: SectionDto;
-  readonly preview: string;
-  readonly meta: string | null;
-  readonly tags: readonly string[];
-}
-
 @Component({
   selector: 'app-home',
   imports: [
@@ -67,7 +65,6 @@ interface SectionSummary {
     BdSideRail,
     BdSidebar,
     BdNavItem,
-    BdNoteItem,
     BdMonacoLine,
     BdIconButton,
     BdButton,
@@ -76,23 +73,36 @@ interface SectionSummary {
     BdOutline,
     BdBacklinks,
     BdStatusBar,
+    BdPageTree,
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Home {
-  private readonly treeService = inject(TREE_SERVICE);
+  private readonly workspaceService = inject(WORKSPACE_SERVICE);
+  private readonly documentsService = inject(DOCUMENTS_SERVICE);
+  private readonly foldersService = inject(FOLDERS_SERVICE);
   private readonly sectionsService = inject(SECTIONS_SERVICE);
   private readonly factsService = inject(FACTS_SERVICE);
   private readonly dialog = inject(MatDialog);
   private readonly snackbar = inject(MatSnackBar);
 
+  protected readonly workspace = signal<WorkspaceDto>({ folders: [], documents: [] });
   protected readonly tree = signal<TreeDto>({ sections: [], facts: [] });
+  protected readonly activeDocumentId = signal<number | null>(null);
   protected readonly loading = signal(true);
   protected readonly searchQuery = signal('');
   protected readonly filter = signal<'all' | 'facts' | 'wip'>('all');
   protected readonly lastModifiedAt = signal<number | null>(null);
+
+  protected readonly activeDocument = computed<DocumentDto | null>(() => {
+    const id = this.activeDocumentId();
+    if (id === null) return null;
+    return this.workspace().documents.find(d => d.id === id) ?? null;
+  });
+
+  protected readonly editorTitle = computed(() => this.activeDocument()?.title ?? '—');
 
   protected readonly lastEditedCaption = computed(() => {
     const ts = this.lastModifiedAt();
@@ -111,8 +121,8 @@ export class Home {
   });
 
   protected readonly activeOutlineId = signal<number | null>(null);
-  // TODO: derive from documents that link to brain-dump.md once that data
-  // model exists. Stubbed empty for now per task 16 acceptance criteria.
+  // TODO: derive from documents that link to the active document once
+  // L1-019 (Cross-Document Backlinks) lands.
   protected readonly backlinks = signal<readonly BdBacklinkEntry[]>([]);
 
   protected readonly statusLeft = computed<BdStatusBarLeft>(() => {
@@ -128,7 +138,6 @@ export class Home {
     lines: this.lines().length,
     language: 'Markdown',
     encoding: 'UTF-8',
-    // TODO: wire real cursor position once the Monaco bridge lands.
     cursor: { line: 1, col: 1 },
   }));
 
@@ -137,28 +146,6 @@ export class Home {
     { id: 'history', icon: 'history',    ariaLabel: 'View history' },
     { id: 'share',   icon: 'share',      ariaLabel: 'Share' },
   ];
-
-  protected readonly rootSections = computed<SectionSummary[]>(() => {
-    const t = this.tree();
-    const factsBySection = new Map<number, FactDto[]>();
-    for (const f of t.facts) {
-      const list = factsBySection.get(f.sectionId) ?? [];
-      list.push(f);
-      factsBySection.set(f.sectionId, list);
-    }
-    return t.sections
-      .filter(s => s.parentId === null)
-      .sort((a, b) => a.position - b.position)
-      .map<SectionSummary>(section => {
-        const directFacts = factsBySection.get(section.id) ?? [];
-        const preview = directFacts.length > 0
-          ? directFacts[0].text.slice(0, 80)
-          : 'Empty section';
-        // SectionDto does not carry timestamps yet — meta stays null until
-        // updatedAt lands on the backend (see task 09 backlog).
-        return { section, preview, meta: null, tags: [] };
-      });
-  });
 
   protected readonly lines = computed<RenderedLine[]>(() => {
     const t = this.tree();
@@ -220,7 +207,57 @@ export class Home {
   });
 
   constructor() {
-    this.loadTree();
+    this.loadWorkspace();
+
+    // Whenever the active document changes, fetch its tree.
+    effect(() => {
+      const id = this.activeDocumentId();
+      if (id === null) {
+        this.tree.set({ sections: [], facts: [] });
+        return;
+      }
+      this.documentsService.getTree(id).subscribe({
+        next: tree => this.tree.set(tree),
+        error: () => this.toast('Failed to load document tree'),
+      });
+    });
+  }
+
+  protected onDocumentSelected(id: number): void {
+    this.activeDocumentId.set(id);
+  }
+
+  protected onAddRootDocument(): void {
+    this.promptForDocument({ initialValue: 'Untitled' }).subscribe(title => {
+      if (title === null) return;
+      const position = nextPosition(
+        this.workspace().documents.filter(d => d.folderId === null),
+      );
+      this.documentsService.create({ folderId: null, title, position }).subscribe({
+        next: created => {
+          this.lastModifiedAt.set(Date.now());
+          this.loadWorkspace(() => this.activeDocumentId.set(created.id));
+          this.toast('Document created');
+        },
+        error: () => this.toast('Failed to create document'),
+      });
+    });
+  }
+
+  protected onAddRootFolder(): void {
+    this.promptForFolder({ initialValue: 'New folder' }).subscribe(title => {
+      if (title === null) return;
+      const position = nextPosition(
+        this.workspace().folders.filter(f => f.parentId === null),
+      );
+      this.foldersService.create({ parentId: null, title, position }).subscribe({
+        next: () => {
+          this.loadWorkspace();
+          this.toast('Folder created');
+        },
+        error: () => this.toast('Failed to create folder'),
+      });
+    });
   }
 
   protected onOutlineClick(entry: BdOutlineEntry): void {
@@ -237,9 +274,6 @@ export class Home {
   }
 
   protected onTopBarAction(action: BdTopAppBarAction): void {
-    // TODO: wire preview / history / share once the matching surfaces exist.
-    // Sign-out has moved out of the toolbar; surface it from the avatar menu
-    // (rail) when that menu is wired up.
     void action;
   }
 
@@ -249,15 +283,20 @@ export class Home {
   }
 
   protected onAddRootSection(): void {
+    const docId = this.activeDocumentId();
+    if (docId === null) {
+      this.toast('Open or create a document first');
+      return;
+    }
     this.promptForSection({ initialValue: '' }).subscribe(title => {
       if (title === null) return;
       const position = nextPosition(
         this.tree().sections.filter(s => s.parentId === null)
       );
-      this.sectionsService.create({ parentId: null, title, position }).subscribe({
+      this.sectionsService.create({ documentId: docId, parentId: null, title, position }).subscribe({
         next: () => {
           this.lastModifiedAt.set(Date.now());
-          this.loadTree();
+          this.refreshTree();
           this.toast('Section created');
         },
         error: () => this.toast('Failed to create section'),
@@ -277,7 +316,7 @@ export class Home {
       }).subscribe({
         next: () => {
           this.lastModifiedAt.set(Date.now());
-          this.loadTree();
+          this.refreshTree();
           this.toast('Section renamed');
         },
         error: () => this.toast('Failed to rename section'),
@@ -299,7 +338,7 @@ export class Home {
       this.sectionsService.delete(section.id).subscribe({
         next: () => {
           this.lastModifiedAt.set(Date.now());
-          this.loadTree();
+          this.refreshTree();
           this.toast('Section deleted');
         },
         error: () => this.toast('Failed to delete section'),
@@ -314,7 +353,7 @@ export class Home {
       this.factsService.create({ sectionId, text, position }).subscribe({
         next: () => {
           this.lastModifiedAt.set(Date.now());
-          this.loadTree();
+          this.refreshTree();
           this.toast('Fact added');
         },
         error: () => this.toast('Failed to add fact'),
@@ -323,13 +362,15 @@ export class Home {
   }
 
   protected onAddChildSection(parentId: number): void {
+    const docId = this.activeDocumentId();
+    if (docId === null) return;
     this.promptForSection({ initialValue: '', title: 'Add child section' }).subscribe(title => {
       if (title === null) return;
       const position = nextPosition(this.tree().sections.filter(s => s.parentId === parentId));
-      this.sectionsService.create({ parentId, title, position }).subscribe({
+      this.sectionsService.create({ documentId: docId, parentId, title, position }).subscribe({
         next: () => {
           this.lastModifiedAt.set(Date.now());
-          this.loadTree();
+          this.refreshTree();
           this.toast('Section added');
         },
         error: () => this.toast('Failed to add section'),
@@ -349,7 +390,7 @@ export class Home {
       }).subscribe({
         next: () => {
           this.lastModifiedAt.set(Date.now());
-          this.loadTree();
+          this.refreshTree();
           this.toast('Fact updated');
         },
         error: () => this.toast('Failed to update fact'),
@@ -371,7 +412,7 @@ export class Home {
       this.factsService.delete(fact.id).subscribe({
         next: () => {
           this.lastModifiedAt.set(Date.now());
-          this.loadTree();
+          this.refreshTree();
           this.toast('Fact deleted');
         },
         error: () => this.toast('Failed to delete fact'),
@@ -379,44 +420,73 @@ export class Home {
     });
   }
 
-  private loadTree(): void {
+  private loadWorkspace(after?: () => void): void {
     this.loading.set(true);
-    this.treeService.getTree().subscribe({
-      next: tree => {
-        this.tree.set(tree);
+    this.workspaceService.get().subscribe({
+      next: ws => {
+        this.workspace.set(ws);
         this.loading.set(false);
+        // If no active doc selected yet, default to the first document so
+        // the editor has something to render.
+        if (this.activeDocumentId() === null && ws.documents.length > 0) {
+          this.activeDocumentId.set(ws.documents[0].id);
+        }
+        after?.();
       },
       error: () => {
         this.loading.set(false);
-        this.toast('Failed to load tree');
+        this.toast('Failed to load workspace');
       },
     });
   }
 
+  private refreshTree(): void {
+    const id = this.activeDocumentId();
+    if (id === null) return;
+    this.documentsService.getTree(id).subscribe({
+      next: tree => this.tree.set(tree),
+      error: () => this.toast('Failed to refresh document'),
+    });
+  }
+
   private promptForSection(opts: { initialValue: string; title?: string }): Observable<string | null> {
-    const data: BdPromptDialogData = {
+    return this.openPrompt({
       title: opts.title ?? 'Add section',
       label: 'Title',
       placeholder: 'Section title',
       initialValue: opts.initialValue,
-    };
-    return this.dialog
-      .open<BdPromptDialog, BdPromptDialogData, string | null>(BdPromptDialog, {
-        data,
-        panelClass: 'bd-dialog-panel',
-        autoFocus: 'first-tabbable',
-      })
-      .afterClosed() as Observable<string | null>;
+    });
   }
 
   private promptForFact(opts: { initialValue: string; title?: string }): Observable<string | null> {
-    const data: BdPromptDialogData = {
+    return this.openPrompt({
       title: opts.title ?? 'Edit fact',
       label: 'Fact',
       placeholder: 'Declarative fact text',
       initialValue: opts.initialValue,
       multiline: true,
-    };
+    });
+  }
+
+  private promptForDocument(opts: { initialValue: string; title?: string }): Observable<string | null> {
+    return this.openPrompt({
+      title: opts.title ?? 'New document',
+      label: 'Title',
+      placeholder: 'Document title',
+      initialValue: opts.initialValue,
+    });
+  }
+
+  private promptForFolder(opts: { initialValue: string; title?: string }): Observable<string | null> {
+    return this.openPrompt({
+      title: opts.title ?? 'New folder',
+      label: 'Title',
+      placeholder: 'Folder title',
+      initialValue: opts.initialValue,
+    });
+  }
+
+  private openPrompt(data: BdPromptDialogData): Observable<string | null> {
     return this.dialog
       .open<BdPromptDialog, BdPromptDialogData, string | null>(BdPromptDialog, {
         data,

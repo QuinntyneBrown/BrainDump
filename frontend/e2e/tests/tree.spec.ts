@@ -11,6 +11,9 @@ test.describe('Tree editing', () => {
     await login.open();
     await login.login(TEST_USER.email, TEST_USER.password);
     await home.waitForLoaded();
+    // Slice 02 turned the workspace into many documents; section-level tests
+    // need a document to anchor against.
+    await home.addRootDocument(uniqueLabel('test-doc'));
   });
 
   test('create a root section, render it as a heading, then delete it', async ({ page }) => {
@@ -89,7 +92,7 @@ test.describe('Tree editing', () => {
 
     const beforeCount = await home.allSectionLines().count();
 
-    await home.addSectionFab.click();
+    await home.addSectionEmpty.click();
     await page.locator('.cdk-overlay-container button:has-text("Cancel")').click();
     await expect(page.locator('.cdk-overlay-container .bd-dialog__title')).toHaveCount(0);
 
