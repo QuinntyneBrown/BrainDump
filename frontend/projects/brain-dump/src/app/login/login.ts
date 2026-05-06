@@ -20,6 +20,12 @@ export class Login {
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
 
+  constructor() {
+    if (this.authService.isAuthenticated()) {
+      this.router.navigate(['/home']);
+    }
+  }
+
   protected onSubmit(event: Event): void {
     event.preventDefault();
 

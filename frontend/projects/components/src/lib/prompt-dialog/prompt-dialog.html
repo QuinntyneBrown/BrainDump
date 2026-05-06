@@ -1,0 +1,27 @@
+<bd-dialog [title]="data.title">
+  <div bdDialogContent>
+    @if (data.multiline) {
+      <bd-text-area
+        [(value)]="value"
+        [label]="data.label ?? null"
+        [placeholder]="data.placeholder ?? ''"
+        [rows]="6"
+      />
+    } @else {
+      <bd-text-field
+        [(value)]="value"
+        [label]="data.label ?? null"
+        [placeholder]="data.placeholder ?? ''"
+        [leadingIcon]="null"
+      />
+    }
+  </div>
+  <div bdDialogActions>
+    <bd-button variant="text" (click)="onCancel()">
+      {{ data.cancelText ?? 'Cancel' }}
+    </bd-button>
+    <bd-button variant="filled" (click)="onConfirm()">
+      {{ data.confirmText ?? 'Save' }}
+    </bd-button>
+  </div>
+</bd-dialog>

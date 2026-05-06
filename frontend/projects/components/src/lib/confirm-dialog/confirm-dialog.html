@@ -1,0 +1,18 @@
+<bd-dialog
+  [title]="data.title"
+  [body]="data.body ?? null"
+  [icon]="data.icon ?? null"
+  [tone]="data.tone ?? 'default'"
+>
+  <div bdDialogActions>
+    <bd-button variant="text" (click)="onCancel()">
+      {{ data.cancelText ?? 'Cancel' }}
+    </bd-button>
+    <bd-button
+      [variant]="data.tone === 'danger' ? 'filled' : 'filled'"
+      (click)="onConfirm()"
+    >
+      {{ data.confirmText ?? 'Confirm' }}
+    </bd-button>
+  </div>
+</bd-dialog>

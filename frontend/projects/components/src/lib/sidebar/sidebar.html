@@ -1,0 +1,9 @@
+@if (heading(); as h) {
+  <header class="bd-sidebar__header">
+    <h2 class="bd-sidebar__title">{{ h }}</h2>
+    <ng-content select="[bdSidebarHeaderActions]" />
+  </header>
+}
+<div class="bd-sidebar__body">
+  <ng-content />
+</div>

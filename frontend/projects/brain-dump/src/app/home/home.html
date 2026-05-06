@@ -1,0 +1,130 @@
+<div class="home-shell">
+  <bd-side-rail>
+    <bd-nav-item label="Notes" icon="description" [active]="true" />
+    <bd-nav-item label="Tags" icon="sell" />
+    <bd-nav-item label="Recent" icon="schedule" />
+    <bd-nav-item label="Settings" icon="settings" />
+  </bd-side-rail>
+
+  <bd-sidebar heading="Notes">
+    <ng-container bdSidebarHeaderActions>
+      <bd-icon-button
+        icon="add"
+        ariaLabel="Add section"
+        tone="primary"
+        (click)="onAddRootSection()"
+        data-testid="add-section"
+      />
+    </ng-container>
+
+    @if (rootSections().length === 0 && !loading()) {
+      <div class="home-shell__empty-aside">
+        <p>No sections yet. Click + to add your first one.</p>
+      </div>
+    }
+
+    @for (s of rootSections(); track s.section.id) {
+      <bd-note-item
+        [title]="s.section.title"
+        [preview]="s.preview"
+        [meta]="s.factCount + (s.factCount === 1 ? ' fact' : ' facts')"
+        [active]="false"
+        [attr.data-testid]="'sidebar-section-' + s.section.id"
+      />
+    }
+  </bd-sidebar>
+
+  <main class="home-shell__editor">
+    <bd-top-app-bar
+      title="brain-dump.md"
+      [leadingIcon]="null"
+      [actions]="topBarActions"
+      (actionClick)="onTopBarAction($event)"
+    />
+
+    <div class="home-shell__editor-body" data-testid="editor">
+      @if (loading()) {
+        <p class="home-shell__loading">Loading…</p>
+      } @else if (lines().length === 0) {
+        <div class="home-shell__empty-editor">
+          <mat-icon>edit_note</mat-icon>
+          <h2>Your brain-dump is empty</h2>
+          <p>Create your first section to get started.</p>
+        </div>
+      } @else {
+        @for (line of lines(); track line.lineNumber) {
+          <div
+            class="home-shell__line"
+            [attr.data-kind]="line.kind"
+            [attr.data-section-id]="line.sectionId ?? null"
+            [attr.data-fact-id]="line.factId ?? null"
+          >
+            <bd-monaco-line [lineNumber]="line.lineNumber" [code]="line.code" />
+            @if (line.kind === 'section' && line.sectionId !== undefined) {
+              <bd-icon-button
+                class="home-shell__line-action"
+                icon="more_vert"
+                ariaLabel="Section actions"
+                [matMenuTriggerFor]="sectionMenu"
+                [matMenuTriggerData]="{ sectionId: line.sectionId }"
+                [attr.data-testid]="'section-menu-' + line.sectionId"
+              />
+            } @else if (line.kind === 'fact' && line.factId !== undefined) {
+              <bd-icon-button
+                class="home-shell__line-action"
+                icon="more_vert"
+                ariaLabel="Fact actions"
+                [matMenuTriggerFor]="factMenu"
+                [matMenuTriggerData]="{ factId: line.factId }"
+                [attr.data-testid]="'fact-menu-' + line.factId"
+              />
+            }
+          </div>
+        }
+      }
+    </div>
+
+    <div class="home-shell__fab">
+      <bd-fab
+        icon="add"
+        ariaLabel="Add section"
+        (click)="onAddRootSection()"
+        data-testid="fab-add-section"
+      />
+    </div>
+  </main>
+</div>
+
+<mat-menu #sectionMenu="matMenu">
+  <ng-template matMenuContent let-sectionId="sectionId">
+    <button mat-menu-item (click)="onAddFact(sectionId)" data-testid="menu-add-fact">
+      <mat-icon>add</mat-icon>
+      <span>Add fact</span>
+    </button>
+    <button mat-menu-item (click)="onAddChildSection(sectionId)" data-testid="menu-add-child-section">
+      <mat-icon>create_new_folder</mat-icon>
+      <span>Add child section</span>
+    </button>
+    <button mat-menu-item (click)="onEditSection(sectionId)" data-testid="menu-edit-section">
+      <mat-icon>edit</mat-icon>
+      <span>Rename</span>
+    </button>
+    <button mat-menu-item (click)="onDeleteSection(sectionId)" data-testid="menu-delete-section">
+      <mat-icon>delete</mat-icon>
+      <span>Delete</span>
+    </button>
+  </ng-template>
+</mat-menu>
+
+<mat-menu #factMenu="matMenu">
+  <ng-template matMenuContent let-factId="factId">
+    <button mat-menu-item (click)="onEditFact(factId)" data-testid="menu-edit-fact">
+      <mat-icon>edit</mat-icon>
+      <span>Edit fact</span>
+    </button>
+    <button mat-menu-item (click)="onDeleteFact(factId)" data-testid="menu-delete-fact">
+      <mat-icon>delete</mat-icon>
+      <span>Delete fact</span>
+    </button>
+  </ng-template>
+</mat-menu>

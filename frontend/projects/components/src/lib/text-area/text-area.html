@@ -1,0 +1,19 @@
+<mat-form-field
+  appearance="outline"
+  subscriptSizing="dynamic"
+  class="bd-text-area"
+>
+  @if (label(); as l) {
+    <mat-label>{{ l }}</mat-label>
+  }
+  <textarea
+    matInput
+    [rows]="rows()"
+    [placeholder]="placeholder()"
+    [disabled]="disabled()"
+    [(ngModel)]="value"
+  ></textarea>
+  @if (hint(); as h) {
+    <mat-hint>{{ h }}</mat-hint>
+  }
+</mat-form-field>
