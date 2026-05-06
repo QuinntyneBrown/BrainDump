@@ -23,7 +23,7 @@ Each markdown file in this folder describes a single discrete UI change derived 
 07. [Add search field below sidebar header](07-sidebar-search-field.md) ✅
 08. [Add filter chips row](08-sidebar-filter-chips.md) ✅
 09. [Enrich note item with icon, tags, and timestamp](09-note-item-structure.md) ✅
-10. [Toolbar left: document icon + facts badge + edited caption](10-toolbar-left.md)
+10. [Toolbar left: document icon + facts badge + edited caption](10-toolbar-left.md) ✅
 11. [Toolbar right: visibility/history/share + Save tonal button](11-toolbar-right.md)
 12. [Toolbar divider + remove fill](12-toolbar-divider.md)
 13. [Editor body padding 48/80 and line gap 8](13-editor-body-spacing.md)

@@ -1,4 +1,4 @@
-# 10 — Toolbar left: document icon + facts badge + edited caption
+# 10 — Toolbar left: document icon + facts badge + edited caption ✅ Completed
 
 **Audit reference:** §3.1
 **Design nodes:** `u7Xtj` ("dtBarLeft") containing:

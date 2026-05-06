@@ -6,7 +6,16 @@
       (click)="leadingClick.emit()"
     />
   }
+  @if (decorativeIcon(); as d) {
+    <mat-icon class="bd-top-app-bar__decorative-icon" aria-hidden="true">{{ d }}</mat-icon>
+  }
   <h1 class="bd-top-app-bar__title">{{ title() }}</h1>
+  @if (badge(); as b) {
+    <bd-badge [count]="b" tone="primary" />
+  }
+  @if (caption(); as c) {
+    <span class="bd-top-app-bar__caption">{{ c }}</span>
+  }
   <span class="bd-top-app-bar__spacer"></span>
   @for (action of actions(); track action.id ?? action.icon) {
     <bd-icon-button

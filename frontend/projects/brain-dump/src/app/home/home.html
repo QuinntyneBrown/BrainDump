@@ -84,6 +84,9 @@
     <bd-top-app-bar
       title="brain-dump.md"
       [leadingIcon]="null"
+      decorativeIcon="description"
+      badge="facts"
+      [caption]="lastEditedCaption()"
       [actions]="topBarActions"
       (actionClick)="onTopBarAction($event)"
     />

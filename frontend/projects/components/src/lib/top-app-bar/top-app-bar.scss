@@ -14,8 +14,16 @@
   height: 64px;
 }
 
+.bd-top-app-bar__decorative-icon {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  line-height: 20px;
+  color: var(--bd-color-text-secondary);
+  flex: 0 0 auto;
+}
+
 .bd-top-app-bar__title {
-  flex: 1 1 auto;
   margin: 0;
   font-family: var(--bd-font-display);
   font-size: var(--bd-size-title-lg);
@@ -25,8 +33,17 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  flex: 0 1 auto;
+}
+
+.bd-top-app-bar__caption {
+  font-family: var(--bd-font-body);
+  font-size: var(--bd-size-label-md);
+  color: var(--bd-color-text-tertiary);
+  white-space: nowrap;
+  flex: 0 0 auto;
 }
 
 .bd-top-app-bar__spacer {
-  flex: 0 0 auto;
+  flex: 1 1 auto;
 }

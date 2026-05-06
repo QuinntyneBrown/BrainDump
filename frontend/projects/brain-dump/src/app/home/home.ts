@@ -87,6 +87,13 @@ export class Home {
   protected readonly loading = signal(true);
   protected readonly searchQuery = signal('');
   protected readonly filter = signal<'all' | 'facts' | 'wip'>('all');
+  protected readonly lastModifiedAt = signal<number | null>(null);
+
+  protected readonly lastEditedCaption = computed(() => {
+    const ts = this.lastModifiedAt();
+    if (ts === null) return null;
+    return `Edited ${formatRelativeTime(Date.now() - ts)}`;
+  });
 
   protected readonly topBarActions: readonly BdTopAppBarAction[] = [
     { id: 'search', icon: 'search', ariaLabel: 'Search notes' },
@@ -194,6 +201,7 @@ export class Home {
       );
       this.sectionsService.create({ parentId: null, title, position }).subscribe({
         next: () => {
+          this.lastModifiedAt.set(Date.now());
           this.loadTree();
           this.toast('Section created');
         },
@@ -213,6 +221,7 @@ export class Home {
         position: section.position,
       }).subscribe({
         next: () => {
+          this.lastModifiedAt.set(Date.now());
           this.loadTree();
           this.toast('Section renamed');
         },
@@ -234,6 +243,7 @@ export class Home {
       if (!confirmed) return;
       this.sectionsService.delete(section.id).subscribe({
         next: () => {
+          this.lastModifiedAt.set(Date.now());
           this.loadTree();
           this.toast('Section deleted');
         },
@@ -248,6 +258,7 @@ export class Home {
       const position = nextPosition(this.tree().facts.filter(f => f.sectionId === sectionId));
       this.factsService.create({ sectionId, text, position }).subscribe({
         next: () => {
+          this.lastModifiedAt.set(Date.now());
           this.loadTree();
           this.toast('Fact added');
         },
@@ -262,6 +273,7 @@ export class Home {
       const position = nextPosition(this.tree().sections.filter(s => s.parentId === parentId));
       this.sectionsService.create({ parentId, title, position }).subscribe({
         next: () => {
+          this.lastModifiedAt.set(Date.now());
           this.loadTree();
           this.toast('Section added');
         },
@@ -281,6 +293,7 @@ export class Home {
         position: fact.position,
       }).subscribe({
         next: () => {
+          this.lastModifiedAt.set(Date.now());
           this.loadTree();
           this.toast('Fact updated');
         },
@@ -302,6 +315,7 @@ export class Home {
       if (!confirmed) return;
       this.factsService.delete(fact.id).subscribe({
         next: () => {
+          this.lastModifiedAt.set(Date.now());
           this.loadTree();
           this.toast('Fact deleted');
         },
@@ -377,6 +391,21 @@ export class Home {
       duration: 3000,
     });
   }
+}
+
+function formatRelativeTime(diffMs: number): string {
+  const minutes = Math.floor(diffMs / 60_000);
+  if (minutes < 1) return 'just now';
+  if (minutes === 1) return '1 minute ago';
+  if (minutes < 60) return `${minutes} minutes ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours === 1) return '1 hour ago';
+  if (hours < 24) return `${hours} hours ago`;
+  const days = Math.floor(hours / 24);
+  if (days === 1) return 'yesterday';
+  if (days < 7) return `${days} days ago`;
+  const weeks = Math.floor(days / 7);
+  return weeks === 1 ? '1 week ago' : `${weeks} weeks ago`;
 }
 
 function nextPosition(items: readonly { position: number }[]): number {
