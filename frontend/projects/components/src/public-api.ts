@@ -4,6 +4,7 @@
  * docs/user-interface-designs/1 - design system.pen.
  */
 
+export * from './lib/backlinks/backlinks';
 export * from './lib/badge/badge';
 export * from './lib/button/button';
 export * from './lib/card/card';

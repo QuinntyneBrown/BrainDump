@@ -244,7 +244,7 @@ Design region: `r0lBi1` ("status bar"), 32 px tall, fill `$color-surface-2`, pad
 - [x] Increase editor body padding to 48 / 80 and line gap to 8 px
 - [x] Style heading markdown lines (#, ##) with primary blue tint and larger size
 - [x] Add Outline panel (340 px right column)
-- [ ] Add Backlinks panel (below outline)
+- [x] Add Backlinks panel (below outline)
 - [ ] Add status bar footer (Saved/branch + lines/encoding/Ln,Col)
 - [ ] Remove the FAB
 - [ ] Fix editor-body background token (surface, not bg)

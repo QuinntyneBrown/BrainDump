@@ -1,4 +1,4 @@
-# 16 — Backlinks panel
+# 16 — Backlinks panel ✅ Completed (renders empty state until backlink data is modelled)
 
 **Audit reference:** §5
 **Design nodes:** `IxtqI` ("BACKLINKS" label) + `lQquH` (`dtBL`) → cards `ginzQ`, `KosMR`. A divider rectangle `flOjh` separates outline from backlinks.

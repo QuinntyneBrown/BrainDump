@@ -29,7 +29,7 @@ Each markdown file in this folder describes a single discrete UI change derived 
 13. [Editor body padding 48/80 and line gap 8](13-editor-body-spacing.md) ✅
 14. [Style heading markdown lines](14-heading-line-styling.md) ✅
 15. [Outline panel (right column)](15-outline-panel.md) ✅
-16. [Backlinks panel](16-backlinks-panel.md)
+16. [Backlinks panel](16-backlinks-panel.md) ✅
 17. [Status bar footer](17-status-bar.md)
 18. [Remove the FAB](18-remove-fab.md)
 19. [Fix editor-body background token](19-editor-body-background.md)

@@ -13,6 +13,8 @@ import {
   TreeDto,
 } from 'api';
 import {
+  BdBacklinkEntry,
+  BdBacklinks,
   BdButton,
   BdChip,
   BdConfirmDialog,
@@ -71,6 +73,7 @@ interface SectionSummary {
     BdTextField,
     BdChip,
     BdOutline,
+    BdBacklinks,
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss',
@@ -106,6 +109,9 @@ export class Home {
   });
 
   protected readonly activeOutlineId = signal<number | null>(null);
+  // TODO: derive from documents that link to brain-dump.md once that data
+  // model exists. Stubbed empty for now per task 16 acceptance criteria.
+  protected readonly backlinks = signal<readonly BdBacklinkEntry[]>([]);
 
   protected readonly topBarActions: readonly BdTopAppBarAction[] = [
     { id: 'preview', icon: 'visibility', ariaLabel: 'Toggle preview' },

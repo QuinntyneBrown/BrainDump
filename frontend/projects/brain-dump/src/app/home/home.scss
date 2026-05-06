@@ -60,6 +60,13 @@ bd-sidebar {
   }
 }
 
+.home-shell__rail-divider {
+  border: 0;
+  height: 1px;
+  background: var(--bd-color-border-subtle);
+  margin: 0;
+}
+
 .home-shell__right-rail {
   display: none;
   flex-direction: column;

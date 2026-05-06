@@ -1,0 +1,17 @@
+<h3 class="bd-backlinks__heading">BACKLINKS</h3>
+@if (entries().length) {
+  <div class="bd-backlinks__list">
+    @for (e of entries(); track e.id) {
+      <button
+        type="button"
+        class="bd-backlinks__card"
+        (click)="entryClick.emit(e)"
+      >
+        <span class="bd-backlinks__title">{{ e.title }}</span>
+        <span class="bd-backlinks__excerpt">{{ e.excerpt }}</span>
+      </button>
+    }
+  </div>
+} @else {
+  <p class="bd-backlinks__empty">No backlinks yet.</p>
+}
