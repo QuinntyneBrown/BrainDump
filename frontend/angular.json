@@ -55,7 +55,10 @@
                 "input": "projects/brain-dump/public"
               }
             ],
-            "styles": ["projects/brain-dump/src/styles.scss"]
+            "styles": ["projects/brain-dump/src/styles.scss"],
+            "stylePreprocessorOptions": {
+              "includePaths": ["dist"]
+            }
           },
           "configurations": {
             "production": {
@@ -71,7 +74,13 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "projects/brain-dump/src/environments/environment.ts",
+                  "with": "projects/brain-dump/src/environments/environment.prod.ts"
+                }
+              ]
             },
             "development": {
               "optimization": false,
@@ -83,6 +92,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          },
           "configurations": {
             "production": {
               "buildTarget": "brain-dump:build:production"

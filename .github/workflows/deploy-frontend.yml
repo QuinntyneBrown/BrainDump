@@ -1,0 +1,59 @@
+name: Deploy frontend to Azure Static Web Apps
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/deploy-frontend.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-frontend
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Inject API base URL into prod environment
+        env:
+          API_BASE_URL: ${{ vars.API_BASE_URL }}
+        run: |
+          if [ -z "$API_BASE_URL" ]; then
+            echo "Repository variable API_BASE_URL is not set." >&2
+            exit 1
+          fi
+          sed -i "s|__API_BASE_URL__|$API_BASE_URL|g" \
+            projects/brain-dump/src/environments/environment.prod.ts
+
+      - name: Build api library
+        run: npx ng build api --configuration=production
+
+      - name: Build brain-dump app
+        run: npx ng build brain-dump --configuration=production
+
+      - name: Deploy to Static Web Apps
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          action: upload
+          app_location: frontend/dist/brain-dump/browser
+          skip_app_build: true
+          skip_api_build: true

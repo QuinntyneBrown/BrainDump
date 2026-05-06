@@ -1,2 +1,11 @@
 # Local Claude Code runtime state (lock files, scheduled task data, etc.)
 .claude/
+
+# Dev-server log files written by background process launchers
+*.log
+*-out.txt
+*-err.txt
+
+# Ad-hoc screenshots and recordings captured during development
+*.png
+*.webm

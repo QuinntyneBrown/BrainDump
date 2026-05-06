@@ -7,6 +7,10 @@ export * from './lib/models/fact.dto';
 export * from './lib/models/tree.dto';
 export * from './lib/models/reorder-item';
 
+export * from './lib/auth/auth.service.contract';
+export * from './lib/auth/auth.service';
+export * from './lib/auth/auth.interceptor';
+
 export * from './lib/tree/tree.service.contract';
 export * from './lib/tree/tree.service';
 
@@ -19,4 +23,6 @@ export * from './lib/facts/facts.service';
 export * from './lib/reorder/reorder.service.contract';
 export * from './lib/reorder/reorder.service';
 
+export * from './lib/api-base-url';
+export * from './lib/api-base-url.interceptor';
 export * from './lib/provide-api';

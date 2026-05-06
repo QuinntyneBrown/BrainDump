@@ -1,0 +1,222 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.login-root {
+  display: flex;
+  min-height: 100%;
+  background: var(--bd-color-bg);
+  color: var(--bd-color-text-primary);
+}
+
+// ── Left branding panel (desktop only, ≥1024px) ─────────────────────────────
+
+.brand-panel {
+  display: none;
+  width: 640px;
+  flex-shrink: 0;
+  background: var(--bd-color-primary-container);
+  color: var(--bd-color-text-primary);
+  align-items: center;
+  justify-content: center;
+  padding: 64px;
+
+  @media (min-width: 1024px) {
+    display: flex;
+  }
+}
+
+.brand-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 360px;
+}
+
+.brand-icon-tile {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--bd-radius-xl);
+  background: rgba(166, 200, 255, 0.18);
+  color: var(--bd-color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  mat-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.brand-name {
+  font-family: var(--bd-font-display);
+  font-size: var(--bd-size-headline-lg);
+  font-weight: var(--bd-weight-bold);
+  color: var(--bd-color-text-primary);
+  margin: 0;
+  line-height: 1.15;
+}
+
+.brand-tagline {
+  font-family: var(--bd-font-body);
+  font-size: var(--bd-size-body-lg);
+  color: var(--bd-color-text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+// ── Right form panel ────────────────────────────────────────────────────────
+
+.form-panel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--bd-color-bg);
+
+  @media (min-width: 1024px) {
+    background: var(--bd-color-surface);
+    padding: 64px;
+  }
+}
+
+.form-card {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+
+  @media (min-width: 768px) and (max-width: 1023.98px) {
+    background: var(--bd-color-surface);
+    border-radius: var(--bd-radius-2xl);
+    padding: 40px;
+    max-width: 480px;
+  }
+}
+
+// ── Mobile/Tablet brand (hidden on ≥1024px) ─────────────────────────────────
+
+.mobile-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+
+  @media (min-width: 1024px) {
+    display: none;
+  }
+}
+
+.mobile-icon-tile {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--bd-radius-lg);
+  background: rgba(166, 200, 255, 0.18);
+  color: var(--bd-color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.mobile-name {
+  font-family: var(--bd-font-display);
+  font-size: var(--bd-size-title-lg);
+  font-weight: var(--bd-weight-semibold);
+  color: var(--bd-color-text-primary);
+}
+
+// ── Form header ──────────────────────────────────────────────────────────────
+
+.form-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-title {
+  font-family: var(--bd-font-display);
+  font-size: var(--bd-size-headline-md);
+  font-weight: var(--bd-weight-bold);
+  color: var(--bd-color-text-primary);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.form-subtitle {
+  font-family: var(--bd-font-body);
+  font-size: var(--bd-size-body-md);
+  color: var(--bd-color-text-secondary);
+  margin: 0;
+}
+
+// ── Form ─────────────────────────────────────────────────────────────────────
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  bd-text-field {
+    display: block;
+    width: 100%;
+  }
+
+  bd-button {
+    display: block;
+    width: 100%;
+
+    ::ng-deep .bd-button {
+      width: 100%;
+      height: 48px;
+    }
+  }
+}
+
+.form-meta {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -4px;
+}
+
+.error-text {
+  font-family: var(--bd-font-body);
+  font-size: var(--bd-size-body-sm);
+  color: var(--bd-color-error);
+  margin: 0;
+}
+
+// ── Shared links ─────────────────────────────────────────────────────────────
+
+.link {
+  font-family: var(--bd-font-body);
+  font-size: var(--bd-size-body-sm);
+  color: var(--bd-color-primary);
+  font-weight: var(--bd-weight-medium);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--bd-color-primary-hover);
+    text-decoration: underline;
+  }
+}
+
+// ── Signup prompt ────────────────────────────────────────────────────────────
+
+.signup-prompt {
+  font-family: var(--bd-font-body);
+  font-size: var(--bd-size-body-md);
+  color: var(--bd-color-text-secondary);
+  text-align: center;
+  margin: 0;
+}

@@ -1,0 +1,58 @@
+<div class="login-root">
+  <aside class="brand-panel" aria-hidden="true">
+    <div class="brand-content">
+      <div class="brand-icon-tile">
+        <mat-icon>psychology</mat-icon>
+      </div>
+      <h1 class="brand-name">BrainDump</h1>
+      <p class="brand-tagline">Your second brain,<br />always within reach.</p>
+    </div>
+  </aside>
+
+  <main class="form-panel">
+    <div class="form-card">
+      <div class="mobile-brand">
+        <div class="mobile-icon-tile">
+          <mat-icon>psychology</mat-icon>
+        </div>
+        <span class="mobile-name">BrainDump</span>
+      </div>
+
+      <header class="form-header">
+        <h2 class="form-title">Welcome back</h2>
+        <p class="form-subtitle">Sign in to continue</p>
+      </header>
+
+      <form class="login-form" (submit)="onSubmit($event)">
+        <bd-text-field
+          [(value)]="email"
+          label="Email address"
+          type="email"
+          leadingIcon="mail"
+        />
+        <bd-text-field
+          [(value)]="password"
+          label="Password"
+          type="password"
+          leadingIcon="lock"
+        />
+
+        <div class="form-meta">
+          <a class="link" href="#" tabindex="-1">Forgot password?</a>
+        </div>
+
+        @if (error()) {
+          <p class="error-text" role="alert">{{ error() }}</p>
+        }
+
+        <bd-button type="submit" [disabled]="loading()">
+          {{ loading() ? 'Signing in…' : 'Sign In' }}
+        </bd-button>
+      </form>
+
+      <p class="signup-prompt">
+        Don't have an account?&nbsp;<a class="link" href="#">Sign up</a>
+      </p>
+    </div>
+  </main>
+</div>
