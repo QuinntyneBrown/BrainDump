@@ -3,7 +3,7 @@
 }
 
 .bd-top-app-bar {
-  --mat-toolbar-container-background-color: var(--bd-color-surface);
+  --mat-toolbar-container-background-color: transparent;
   --mat-toolbar-container-text-color: var(--bd-color-text-primary);
   --mat-toolbar-standard-height: 64px;
 
@@ -12,6 +12,8 @@
   gap: var(--bd-space-3);
   padding: 0 var(--bd-space-4);
   height: 64px;
+  background: transparent;
+  border-bottom: 1px solid var(--bd-color-border-subtle);
 }
 
 .bd-top-app-bar__decorative-icon {

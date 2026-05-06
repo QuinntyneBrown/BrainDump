@@ -1,4 +1,4 @@
-# 12 — Toolbar divider + remove fill
+# 12 — Toolbar divider + remove fill ✅ Completed
 
 **Audit reference:** §3.3
 **Design nodes:** `uTvUy` (toolbar — no fill) followed by `hJQor` (1 px rectangle, fill `$color-border-subtle`).
