@@ -22,6 +22,7 @@ export * from './lib/prompt-dialog/prompt-dialog';
 export * from './lib/side-rail/side-rail';
 export * from './lib/sidebar/sidebar';
 export * from './lib/snackbar/snackbar';
+export * from './lib/status-bar/status-bar';
 export * from './lib/swatch/swatch';
 export * from './lib/text-area/text-area';
 export * from './lib/text-field/text-field';

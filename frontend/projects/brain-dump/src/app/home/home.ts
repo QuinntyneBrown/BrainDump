@@ -31,6 +31,9 @@ import {
   BdSideRail,
   BdSidebar,
   BdSnackbar,
+  BdStatusBar,
+  BdStatusBarLeft,
+  BdStatusBarRight,
   BdTextField,
   BdTopAppBar,
   BdTopAppBarAction,
@@ -74,6 +77,7 @@ interface SectionSummary {
     BdChip,
     BdOutline,
     BdBacklinks,
+    BdStatusBar,
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss',
@@ -112,6 +116,23 @@ export class Home {
   // TODO: derive from documents that link to brain-dump.md once that data
   // model exists. Stubbed empty for now per task 16 acceptance criteria.
   protected readonly backlinks = signal<readonly BdBacklinkEntry[]>([]);
+
+  protected readonly statusLeft = computed<BdStatusBarLeft>(() => {
+    const ts = this.lastModifiedAt();
+    return {
+      saveState: 'saved',
+      savedAgo: ts === null ? null : formatRelativeTime(Date.now() - ts),
+      branch: 'main',
+    };
+  });
+
+  protected readonly statusRight = computed<BdStatusBarRight>(() => ({
+    lines: this.lines().length,
+    language: 'Markdown',
+    encoding: 'UTF-8',
+    // TODO: wire real cursor position once the Monaco bridge lands.
+    cursor: { line: 1, col: 1 },
+  }));
 
   protected readonly topBarActions: readonly BdTopAppBarAction[] = [
     { id: 'preview', icon: 'visibility', ariaLabel: 'Toggle preview' },

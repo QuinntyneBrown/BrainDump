@@ -1,4 +1,4 @@
-# 17 — Status bar footer
+# 17 — Status bar footer ✅ Completed (cursor stub at 1/1 until Monaco bridge lands)
 
 **Audit reference:** §6.1
 **Design nodes:** `r0lBi1` (status bar, 32 tall, fill `$color-surface-2`, padding `[24, 0]`); left group `R27JvN` containing `T6QYRw` (saved indicator) and `xpzup` (branch); right group `PIE2V` containing 4 mono text fields.

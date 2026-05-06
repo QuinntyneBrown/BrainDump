@@ -1,0 +1,22 @@
+<div class="bd-status-bar__left">
+  <span class="bd-status-bar__group">
+    <mat-icon class="bd-status-bar__icon" [attr.data-tone]="left().saveState">
+      {{ saveIcon() }}
+    </mat-icon>
+    <span class="bd-status-bar__text">{{ saveLabel() }}</span>
+  </span>
+  @if (left().branch; as b) {
+    <span class="bd-status-bar__group">
+      <mat-icon class="bd-status-bar__icon" data-tone="muted">merge_type</mat-icon>
+      <span class="bd-status-bar__text bd-status-bar__text--mono">{{ b }}</span>
+    </span>
+  }
+</div>
+<div class="bd-status-bar__right">
+  <span class="bd-status-bar__text bd-status-bar__text--mono">{{ right().lines }} lines</span>
+  <span class="bd-status-bar__text bd-status-bar__text--mono">{{ right().language }}</span>
+  <span class="bd-status-bar__text bd-status-bar__text--mono">{{ right().encoding }}</span>
+  <span class="bd-status-bar__text bd-status-bar__text--mono">
+    Ln {{ right().cursor.line }}, Col {{ right().cursor.col }}
+  </span>
+</div>
