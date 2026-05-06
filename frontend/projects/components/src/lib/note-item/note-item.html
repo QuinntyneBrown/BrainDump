@@ -1,4 +1,14 @@
-<span class="bd-note-item__title">{{ title() }}</span>
+<div class="bd-note-item__row">
+  <mat-icon class="bd-note-item__icon">{{ icon() }}</mat-icon>
+  <span class="bd-note-item__title">{{ title() }}</span>
+  @if (tags().length) {
+    <span class="bd-note-item__tags">
+      @for (t of tags(); track t) {
+        <span class="bd-note-item__tag">#{{ t }}</span>
+      }
+    </span>
+  }
+</div>
 @if (preview(); as p) {
   <span class="bd-note-item__preview">{{ p }}</span>
 }

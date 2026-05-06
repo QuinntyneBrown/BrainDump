@@ -1,4 +1,4 @@
-# 09 — Enrich note item with icon, tags, and timestamp
+# 09 — Enrich note item with icon, tags, and timestamp ✅ Completed (structural; relative-time pending API timestamps)
 
 **Audit reference:** §2.4
 **Design nodes:** `ctGht` (Component/NoteItem), `r0rw0` (Component/NoteItem/Active).

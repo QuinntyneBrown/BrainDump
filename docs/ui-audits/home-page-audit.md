@@ -237,7 +237,7 @@ Design region: `r0lBi1` ("status bar"), 32 px tall, fill `$color-surface-2`, pad
 - [x] Replace sidebar header `+` icon button with "+ New" tonal text button
 - [x] Add search field below sidebar header
 - [x] Add filter chips row (All, #facts, #wip)
-- [ ] Add document icon, tag chips, and relative-time caption to each note item
+- [x] Add document icon, tag chips, and relative-time caption to each note item
 - [ ] Add `description` icon, `facts` badge, and "Edited Xm ago" caption to the editor toolbar left
 - [ ] Add visibility / history / share icon buttons + Save tonal button to toolbar right
 - [ ] Add 1 px divider under toolbar; remove toolbar fill

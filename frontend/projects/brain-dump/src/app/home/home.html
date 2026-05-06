@@ -71,7 +71,9 @@
       <bd-note-item
         [title]="s.section.title"
         [preview]="s.preview"
-        [meta]="s.factCount + (s.factCount === 1 ? ' fact' : ' facts')"
+        [meta]="s.meta"
+        [tags]="s.tags"
+        icon="description"
         [active]="false"
         [attr.data-testid]="'sidebar-section-' + s.section.id"
       />

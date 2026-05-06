@@ -45,8 +45,9 @@ interface RenderedLine {
 
 interface SectionSummary {
   readonly section: SectionDto;
-  readonly factCount: number;
   readonly preview: string;
+  readonly meta: string | null;
+  readonly tags: readonly string[];
 }
 
 @Component({
@@ -105,15 +106,12 @@ export class Home {
       .sort((a, b) => a.position - b.position)
       .map<SectionSummary>(section => {
         const directFacts = factsBySection.get(section.id) ?? [];
-        const descendantIds = collectDescendantIds(t.sections, section.id);
-        let totalFacts = directFacts.length;
-        for (const id of descendantIds) {
-          totalFacts += (factsBySection.get(id) ?? []).length;
-        }
         const preview = directFacts.length > 0
           ? directFacts[0].text.slice(0, 80)
           : 'Empty section';
-        return { section, factCount: totalFacts, preview };
+        // SectionDto does not carry timestamps yet — meta stays null until
+        // updatedAt lands on the backend (see task 09 backlog).
+        return { section, preview, meta: null, tags: [] };
       });
   });
 
@@ -379,21 +377,6 @@ export class Home {
       duration: 3000,
     });
   }
-}
-
-function collectDescendantIds(sections: readonly SectionDto[], rootId: number): number[] {
-  const result: number[] = [];
-  const queue: number[] = [rootId];
-  while (queue.length > 0) {
-    const current = queue.shift()!;
-    for (const s of sections) {
-      if (s.parentId === current) {
-        result.push(s.id);
-        queue.push(s.id);
-      }
-    }
-  }
-  return result;
 }
 
 function nextPosition(items: readonly { position: number }[]): number {
