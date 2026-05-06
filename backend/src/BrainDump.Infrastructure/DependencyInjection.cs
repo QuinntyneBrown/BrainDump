@@ -1,5 +1,6 @@
 using BrainDump.Application.Interfaces;
 using BrainDump.Infrastructure.Persistence;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,11 +14,47 @@ public static class DependencyInjection
         var connectionString = configuration.GetConnectionString("DefaultConnection")
             ?? throw new InvalidOperationException("ConnectionStrings:DefaultConnection is not configured");
 
+        // Database:Provider selects the EF provider. Defaults to SqlServer for back-compat.
+        // Local dev uses Sqlite; production uses SqlServer (Azure SQL).
+        var provider = configuration["Database:Provider"] ?? "SqlServer";
+
         services.AddDbContext<AppDbContext>(options =>
-            options.UseAzureSqlAuthentication(connectionString));
+        {
+            switch (provider.ToLowerInvariant())
+            {
+                case "sqlite":
+                    options.UseSqlite(connectionString);
+                    break;
+                case "sqlserver":
+                    if (UsesAzureSqlPasswordlessAuth(connectionString))
+                        options.UseAzureSqlAuthentication(connectionString);
+                    else
+                        options.UseSqlServer(connectionString);
+                    break;
+                default:
+                    throw new InvalidOperationException(
+                        $"Unsupported Database:Provider value '{provider}'. Use 'SqlServer' or 'Sqlite'.");
+            }
+        });
 
         services.AddScoped<IAppDbContext>(sp => sp.GetRequiredService<AppDbContext>());
 
         return services;
+    }
+
+    // Use the AccessTokenCallback path only when targeting Azure SQL *and* the
+    // connection string doesn't already specify an Authentication mode — the
+    // callback and Authentication=... are mutually exclusive in SqlClient.
+    private static bool UsesAzureSqlPasswordlessAuth(string connectionString)
+    {
+        SqlConnectionStringBuilder builder;
+        try { builder = new SqlConnectionStringBuilder(connectionString); }
+        catch { return false; }
+
+        var host = builder.DataSource ?? string.Empty;
+        var isAzureSql = host.Contains(".database.windows.net", StringComparison.OrdinalIgnoreCase);
+        var hasExplicitAuth = builder.Authentication != SqlAuthenticationMethod.NotSpecified;
+
+        return isAzureSql && !hasExplicitAuth;
     }
 }

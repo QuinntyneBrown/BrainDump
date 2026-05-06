@@ -10,6 +10,11 @@ logs/*
 *-out.txt
 *-err.txt
 
+# Local SQLite database files (Development uses Sqlite via Database:Provider).
+*.db
+*.db-shm
+*.db-wal
+
 # Ad-hoc screenshots and recordings captured during development
 *.png
 *.webm

@@ -8,11 +8,11 @@ public class FactConfiguration : IEntityTypeConfiguration<Fact>
 {
     public void Configure(EntityTypeBuilder<Fact> builder)
     {
-        builder.ToTable("fact", t => t.HasCheckConstraint("CK_fact_text_nonempty", "LEN(text) > 0"));
+        builder.ToTable("fact", t => t.HasCheckConstraint("CK_fact_text_nonempty", "text <> ''"));
         builder.HasKey(f => f.Id);
         builder.Property(f => f.Id).HasColumnName("id").UseIdentityColumn();
         builder.Property(f => f.SectionId).HasColumnName("section_id").IsRequired();
-        builder.Property(f => f.Text).HasColumnName("text").HasColumnType("nvarchar(max)").IsRequired();
+        builder.Property(f => f.Text).HasColumnName("text").IsRequired();
         builder.Property(f => f.Position).HasColumnName("position").IsRequired();
 
         builder.HasOne(f => f.Section)
