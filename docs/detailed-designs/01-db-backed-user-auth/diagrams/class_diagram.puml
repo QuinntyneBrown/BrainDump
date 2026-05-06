@@ -1,0 +1,76 @@
+@startuml class_diagram
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+
+title DB-Backed User Authentication — Domain & Service Model
+
+package "BrainDump.Domain.Entities" {
+    class User {
+        +Id: int
+        +Email: string
+        +PasswordHash: string?
+        +CreatedAt: DateTime
+    }
+
+    class Section <<existing>> {
+        +Id: int
+        +ParentId: int?
+        +Title: string
+        +Position: int
+    }
+
+    class Fact <<existing>> {
+        +Id: int
+        +SectionId: int
+        +Text: string
+        +Position: int
+    }
+}
+
+package "BrainDump.Application.Interfaces" {
+    interface IUserRepository {
+        +FindByEmailAsync(email): Task<User?>
+        +CreateAsync(email, passwordHash): Task<User>
+    }
+
+    interface ICurrentUser {
+        +UserId: int
+        +Email: string
+    }
+}
+
+package "BrainDump.Infrastructure.Auth" {
+    class UserRepository {
+        -db: AppDbContext
+    }
+    class PasswordHasher {
+        +Hash(password): string
+        +Verify(hash, password): bool
+    }
+    class CurrentUserAccessor {
+        +UserId: int
+        +Email: string
+    }
+}
+
+package "BrainDump.Api" {
+    class AuthController <<modified>>
+    class UserBootstrapHandler <<new>>
+}
+
+UserRepository ..|> IUserRepository
+CurrentUserAccessor ..|> ICurrentUser
+
+AuthController --> IUserRepository
+AuthController --> PasswordHasher
+UserBootstrapHandler --> IUserRepository
+UserBootstrapHandler --> ICurrentUser
+
+note bottom of Section
+  Section / Fact unchanged.
+  Ownership FK to User
+  is deferred (see §1.3).
+end note
+
+@enduml

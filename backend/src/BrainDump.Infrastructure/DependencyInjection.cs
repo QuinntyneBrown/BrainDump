@@ -14,8 +14,9 @@ public static class DependencyInjection
         var connectionString = configuration.GetConnectionString("DefaultConnection")
             ?? throw new InvalidOperationException("ConnectionStrings:DefaultConnection is not configured");
 
-        // Database:Provider selects the EF provider. Defaults to SqlServer for back-compat.
-        // Local dev uses Sqlite; production uses SqlServer (Azure SQL).
+        // Database:Provider selects the EF provider. Default is SqlServer for both
+        // local dev (against the Compose-launched container) and production (Azure SQL).
+        // The Sqlite branch remains as an opt-in fallback for file-based dev workflows.
         var provider = configuration["Database:Provider"] ?? "SqlServer";
 
         services.AddDbContext<AppDbContext>(options =>

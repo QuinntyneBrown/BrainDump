@@ -9,6 +9,15 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Production-safety guard (L2-032): local sign-in must never be enabled outside
+// the Development environment. Fail fast at startup before any request is served.
+if (builder.Configuration.GetValue<bool>("Jwt:UseLocalAuth") && !builder.Environment.IsDevelopment())
+{
+    throw new InvalidOperationException(
+        $"Jwt:UseLocalAuth is enabled but ASPNETCORE_ENVIRONMENT='{builder.Environment.EnvironmentName}'. " +
+        "Local sign-in is for Development only — disable Jwt:UseLocalAuth or set the environment to Development.");
+}
+
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -73,6 +82,12 @@ builder.Services
 
 builder.Services.AddAuthorization();
 
+// Health checks: /healthz reflects DB connectivity so docker-compose readiness
+// and L2-028 #2 ("GET /healthz returns 200 OK") have a real signal.
+builder.Services
+    .AddHealthChecks()
+    .AddDbContextCheck<AppDbContext>();
+
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
@@ -89,6 +104,7 @@ else
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapHealthChecks("/healthz").AllowAnonymous();
 app.MapControllers();
 
 // First-deploy schema bootstrap. Replace with Database.MigrateAsync()

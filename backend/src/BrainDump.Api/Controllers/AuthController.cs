@@ -46,6 +46,10 @@ public class AuthController : ControllerBase
     [HttpPost("authorize")]
     public ActionResult<AuthorizeResponse> Authorize([FromBody] AuthorizeRequest request)
     {
+        // L2-031 #5: when local sign-in is disabled, the endpoint must be absent
+        // (404), not return 401, so callers can tell "feature off" from "wrong creds".
+        if (!_config.GetValue<bool>("Jwt:UseLocalAuth")) return NotFound();
+
         var devEmail = _config["Jwt:LocalAuth:DevEmail"];
         var devPassword = _config["Jwt:LocalAuth:DevPassword"];
 
@@ -67,6 +71,8 @@ public class AuthController : ControllerBase
     [HttpPost("token")]
     public ActionResult<TokenResponse> Token([FromBody] TokenRequest request)
     {
+        if (!_config.GetValue<bool>("Jwt:UseLocalAuth")) return NotFound();
+
         if (!string.Equals(request.GrantType, "authorization_code", StringComparison.OrdinalIgnoreCase))
             return BadRequest(new { message = "Unsupported grant_type." });
 

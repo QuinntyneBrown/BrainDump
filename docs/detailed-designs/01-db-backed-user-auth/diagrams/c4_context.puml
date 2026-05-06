@@ -1,0 +1,18 @@
+@startuml c4_context
+!theme plain
+!include <C4/C4_Context>
+
+title DB-Backed User Authentication — System Context
+
+Person(dev, "Developer", "Signs in locally with email + password")
+Person(user, "End User", "Signs in via Entra ID in production")
+
+System(braindump, "Brain Dump", "Angular SPA + .NET API + SQL DB")
+System_Ext(entra, "Microsoft Entra ID", "Issues OIDC tokens in production")
+
+Rel(dev, braindump, "Local sign-in (PKCE)", "HTTPS")
+Rel(user, braindump, "Authenticated requests", "HTTPS")
+Rel(user, entra, "Authorization Code + PKCE", "HTTPS")
+Rel(braindump, entra, "Validates JWT signing keys", "HTTPS")
+
+@enduml

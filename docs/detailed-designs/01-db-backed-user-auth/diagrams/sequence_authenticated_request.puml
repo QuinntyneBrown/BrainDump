@@ -1,0 +1,34 @@
+@startuml sequence_authenticated_request
+!theme plain
+skinparam sequenceMessageAlign center
+
+title Authenticated Request — Common Path (Both Auth Modes)
+
+actor Caller
+participant "API Endpoint" as API
+participant "JwtBearer\nMiddleware" as JWT
+participant "UserBootstrap\nHandler" as Boot
+participant "ICurrentUser" as CU
+participant "MediatR Handler" as MR
+database "user table" as DB
+
+Caller -> API: GET /api/tree\nBearer <jwt>
+API -> JWT: Authenticate
+JWT -> JWT: Validate token
+JWT -> Boot: OnTokenValidated
+Boot -> DB: SELECT user WHERE email=@e
+DB --> Boot: User
+Boot -> CU: Set UserId, Email
+Boot --> JWT: ok
+JWT --> API: ClaimsPrincipal
+API -> MR: Send(request)
+note right of MR
+  Today: handler ignores
+  CurrentUser. Future
+  ownership work injects
+  ICurrentUser here.
+end note
+MR --> API: response
+API --> Caller: 200 OK
+
+@enduml

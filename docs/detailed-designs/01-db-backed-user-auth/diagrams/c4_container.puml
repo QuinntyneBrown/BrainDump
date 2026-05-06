@@ -1,0 +1,22 @@
+@startuml c4_container
+!theme plain
+!include <C4/C4_Container>
+
+title DB-Backed User Authentication — Container Diagram
+
+Person(actor, "Developer / End User")
+System_Ext(entra, "Microsoft Entra ID", "OIDC")
+
+System_Boundary(bd, "Brain Dump") {
+    Container(spa, "Angular SPA", "TypeScript / Angular Material", "Login form (dev) and Entra redirect (prod)")
+    Container(api, "BrainDump.Api", ".NET 9 / ASP.NET Core", "AuthController + JwtBearer pipeline + user lookup")
+    ContainerDb(db, "Application Database", "SQL Server / Azure SQL", "section, fact, **user** tables")
+}
+
+Rel(actor, spa, "Uses", "HTTPS")
+Rel(spa, api, "POST /api/auth/* (dev)\nGET/POST /api/* with Bearer", "JSON / HTTPS")
+Rel(spa, entra, "Auth Code + PKCE (prod)", "HTTPS")
+Rel(api, entra, "Fetch JWKS", "HTTPS")
+Rel(api, db, "Find/insert user by email\nCRUD section/fact", "SQL / TDS")
+
+@enduml

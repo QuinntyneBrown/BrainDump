@@ -1,0 +1,37 @@
+@startuml sequence_production_signin
+!theme plain
+skinparam sequenceMessageAlign center
+
+title Production Sign-In (Entra ID) with JIT User Upsert
+
+actor "End User" as User
+participant "Angular SPA" as SPA
+participant "Entra ID" as Entra
+participant "JwtBearer\nMiddleware" as JWT
+participant "UserBootstrap\nHandler" as Boot
+participant "IUserRepository" as Repo
+participant "ICurrentUser" as CU
+participant "MediatR\nHandler" as MR
+database "user table" as DB
+
+User -> SPA: Open app
+SPA -> Entra: Authorization Code + PKCE
+Entra --> SPA: id_token + access_token
+SPA -> JWT: GET /api/tree\nAuthorization: Bearer <jwt>
+JWT -> JWT: Validate issuer / signature\naudience / expiry (L2-022)
+JWT -> Boot: OnTokenValidated(principal)
+Boot -> Boot: Read email claim\n(fail if missing)
+Boot -> Repo: FindByEmailAsync(email)
+Repo -> DB: SELECT * FROM user
+DB --> Repo: null
+Repo --> Boot: null
+Boot -> Repo: CreateAsync(email, hash=null)
+Repo -> DB: INSERT INTO user(email, ...)
+DB --> Repo: User { Id }
+Repo --> Boot: User
+Boot -> CU: Set UserId, Email
+Boot --> JWT: ok
+JWT -> MR: Invoke handler
+MR --> SPA: 200 OK { tree }
+
+@enduml

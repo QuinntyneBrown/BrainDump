@@ -1,0 +1,34 @@
+# Keep the build context lean and avoid copying host build artifacts that the
+# image build would otherwise stomp.
+**/bin
+**/obj
+**/node_modules
+**/dist
+
+# Local runtime / scratch
+**/.vs
+**/.vscode
+**/.idea
+**/logs
+**/*.log
+**/.env
+**/.env.local
+
+# Git metadata
+.git
+.gitattributes
+.gitignore
+.github
+
+# Tests aren't needed inside the runtime image
+backend/tests
+backend/test-results
+
+# Frontend assets — the API image doesn't need them
+frontend/playwright-report
+frontend/test-results
+
+# Docker-related files don't need to land inside the image
+docker-compose*.yml
+**/Dockerfile*
+.dockerignore

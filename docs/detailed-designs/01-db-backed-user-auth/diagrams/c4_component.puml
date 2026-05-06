@@ -1,0 +1,27 @@
+@startuml c4_component
+!theme plain
+!include <C4/C4_Component>
+
+title DB-Backed User Authentication — Component Diagram (BrainDump.Api)
+
+ContainerDb(db, "Database", "SQL", "user table")
+System_Ext(entra, "Entra ID", "JWKS")
+
+Container_Boundary(api, "BrainDump.Api") {
+    Component(authCtl, "AuthController", "ASP.NET Core controller", "Local PKCE: /api/auth/authorize, /api/auth/token (dev only)")
+    Component(jwtMw, "JwtBearer Middleware", "ASP.NET Core", "Validates issuer, signature, audience, expiry")
+    Component(bootstrap, "UserBootstrapHandler", "OnTokenValidated event", "Find-or-create user; populate CurrentUser")
+    Component(currentUser, "CurrentUserAccessor", "Scoped service", "Holds UserId + Email per request")
+    Component(hasher, "PasswordHasher", "PasswordHasher<User> wrapper", "Hash / Verify (local dev only)")
+    Component(userRepo, "UserRepository", "EF Core", "FindByEmail / Create")
+}
+
+Rel(authCtl, hasher, "Verify(hash, password)")
+Rel(authCtl, userRepo, "FindByEmailAsync")
+Rel(jwtMw, entra, "Fetch signing keys", "HTTPS")
+Rel(jwtMw, bootstrap, "OnTokenValidated")
+Rel(bootstrap, userRepo, "FindByEmail / Create")
+Rel(bootstrap, currentUser, "Set UserId, Email")
+Rel(userRepo, db, "SELECT / INSERT", "SQL")
+
+@enduml

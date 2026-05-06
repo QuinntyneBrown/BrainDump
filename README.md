@@ -38,43 +38,72 @@ brain-dump/
 
 ## Prerequisites
 
-- [.NET 9 SDK](https://dotnet.microsoft.com/download)
-- [Node.js 20+](https://nodejs.org/) and npm 10+
-- [Angular CLI 21](https://angular.dev/tools/cli) (`npm install -g @angular/cli`)
-- SQL Server (LocalDB, Docker, or Azure SQL) for integration tests
-- A Microsoft Entra ID (Azure AD) tenant for authentication
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) with Docker Compose v2 — the canonical local-development path runs every dependency in containers (L1-012).
+- For host-side iteration on backend or frontend code (alternative to Compose), you'll additionally want:
+  - [.NET 9 SDK](https://dotnet.microsoft.com/download)
+  - [Node.js 20+](https://nodejs.org/) and npm 10+
+  - [Angular CLI 21](https://angular.dev/tools/cli) (`npm install -g @angular/cli`)
+- A Microsoft Entra ID (Azure AD) tenant — only required for **deployed** environments. Local development uses an in-app dev sign-in that is disabled outside `Development` (see [L1-014](docs/specs/L1.md)).
 
 ## Getting Started
 
-### Backend
+### Quick start (Docker Compose)
 
 ```bash
-# Restore and build
-dotnet build backend/BrainDump.sln
+# 1. Copy the env template — picks up the default SQL Server SA password.
+cp .env.example .env
 
-# Run all tests
-dotnet test backend/BrainDump.sln
+# 2. Bring everything up (sqlserver → api → web).
+docker compose up
 
-# Run the API (configure appsettings.Development.json first)
-dotnet run --project backend/src/BrainDump.Api
+# 3. Open the app and sign in with the development credentials below.
+#    http://localhost:4200
 ```
 
-### Frontend
+| Service | Host port | Container port |
+|---|---|---|
+| Angular dev server (`web`) | 4200 | 4200 |
+| API (`api`) | 5153 | 8080 |
+| SQL Server (`sqlserver`) | 1433 | 1433 |
+
+**Dev credentials** (configured in `appsettings.Development.json` under `Jwt:LocalAuth`):
+
+- Email: `user@braindump.dev`
+- Password: `Password1!`
+
+These credentials drive a local PKCE sign-in flow (`POST /api/auth/authorize` + `POST /api/auth/token`) that is **only** registered when `Jwt:UseLocalAuth=true`. The application refuses to start with that flag enabled in any non-`Development` environment (see [L2-032](docs/specs/L2.md)).
+
+The `eng/scripts/start.bat` and `eng/scripts/stop.bat` helpers are thin wrappers around `docker compose up` / `docker compose down` for click-to-run on Windows.
+
+To inspect logs, follow with `docker compose logs -f api` (or `web`, `sqlserver`). To wipe the SQL Server volume and reset to an empty database, use `docker compose down -v`.
+
+### Host development (alternative)
+
+If you'd rather run the backend or frontend on the host (faster startup, easier debugger attach), keep the SQL Server container up and run the rest natively:
 
 ```bash
+# Just the database
+docker compose up -d sqlserver
+
+# Backend on the host (will connect to localhost:1433)
+dotnet build backend/BrainDump.sln
+dotnet test  backend/BrainDump.sln
+dotnet run --project backend/src/BrainDump.Api
+
+# Frontend on the host
 cd frontend
 npm install
 npm start        # ng serve — http://localhost:4200
-npm test         # ng test
-npm run build    # production build
 ```
+
+`appsettings.Development.json` already targets `Server=localhost,1433` with the same SA password as `.env.example`, so host-run and Compose-run share the same database without further configuration.
 
 ### Configuration
 
-Copy `backend/src/BrainDump.Api/appsettings.Development.json.example` (once provided) and supply:
+`appsettings.Development.json` ships with everything needed for a local run, including the dev sign-in keys. Production requires (and only accepts) the following:
 
-- `ConnectionStrings:BrainDump` — your SQL Server / Azure SQL connection string
-- `AzureAd:TenantId`, `AzureAd:ClientId` — your Entra ID app registration details
+- `ConnectionStrings:DefaultConnection` — Azure SQL connection string (passwordless / Entra ID, no password). See [L2-011](docs/specs/L2.md).
+- `Jwt:Authority`, `Jwt:Audience` — your Entra ID tenant + app registration. `Jwt:UseLocalAuth` must be `false` (the default).
 
 ## API Reference
 

@@ -1,26 +1,25 @@
-# Stops the brain-dump backend (5153) and frontend (4200) by killing the
-# PIDs listening on those ports. Get-NetTCPConnection is more reliable
-# than parsing netstat output and avoids cmd quoting issues.
+# Click-to-run wrapper around `docker compose down`. Stops and removes the
+# containers brought up by start.bat / `docker compose up`. Persistent
+# volumes (e.g. mssql-data) are retained — pass -v to also drop them.
 
-$ports = @{
-    5153 = 'BrainDump.Api'
-    4200 = 'BrainDump.Web'
+param(
+    [switch]$VolumesToo
+)
+
+$repoRoot = Resolve-Path (Join-Path $PSScriptRoot '..' '..')
+
+Push-Location $repoRoot
+try {
+    if ($VolumesToo) {
+        Write-Host 'Stopping BrainDump stack and removing volumes ...'
+        docker compose down -v
+    } else {
+        Write-Host 'Stopping BrainDump stack (volumes retained) ...'
+        docker compose down
+    }
 }
-
-foreach ($port in $ports.Keys) {
-    $label = $ports[$port]
-    $owners = Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue |
-              Select-Object -ExpandProperty OwningProcess -Unique
-
-    if (-not $owners) {
-        Write-Host "No process listening on port $port ($label)."
-        continue
-    }
-
-    foreach ($id in $owners) {
-        Write-Host "Stopping $label (PID $id on port $port)..."
-        Stop-Process -Id $id -Force -ErrorAction SilentlyContinue
-    }
+finally {
+    Pop-Location
 }
 
 Write-Host 'Done.'

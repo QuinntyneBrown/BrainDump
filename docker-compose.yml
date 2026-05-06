@@ -1,0 +1,90 @@
+# Local-development orchestration for the brain-dump stack (L1-012).
+#
+# `docker compose up` from the repository root starts:
+#   - sqlserver — Microsoft SQL Server 2022 with persisted data (L1-013)
+#   - api       — .NET 9 backend with /healthz (L2-028 #2)
+#   - web       — Angular dev server, source bind-mounted for hot reload
+#
+# The SA password is read from MSSQL_SA_PASSWORD; a documented default lives
+# in `.env.example` (copy to `.env` on first run). This password is the
+# explicit local-only exception to L1-006 (see L1-013).
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: braindump-sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:-Your_strong!Passw0rd}
+      MSSQL_PID: Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql
+    healthcheck:
+      # 2022-latest ships sqlcmd at /opt/mssql-tools18/bin and requires -C
+      # (trust the self-signed server cert) for the loopback connection.
+      test:
+        - CMD-SHELL
+        - /opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P "$$MSSQL_SA_PASSWORD" -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - braindump
+
+  api:
+    build:
+      # Build context is the repo root so the Dockerfile can COPY both
+      # backend/src and the solution file across project boundaries.
+      context: .
+      dockerfile: backend/src/BrainDump.Api/Dockerfile
+    container_name: braindump-api
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      # Connection string targets the Compose service name (L2-027 #3) — the
+      # api container resolves "sqlserver" via the user-defined network's DNS.
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=BrainDump;User Id=sa;Password=${MSSQL_SA_PASSWORD:-Your_strong!Passw0rd};TrustServerCertificate=true;Encrypt=true"
+      Database__Provider: SqlServer
+      Database__EnsureCreatedOnStartup: "true"
+    ports:
+      - "5153:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - braindump
+
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: braindump-web
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "4200:4200"
+    volumes:
+      # Bind-mount the workspace so edits hot-reload. The named volume on
+      # node_modules keeps the container's Linux-built deps from being
+      # shadowed by the host's node_modules (which may target Windows).
+      - ./frontend:/workspace
+      - web-node-modules:/workspace/node_modules
+    networks:
+      - braindump
+
+networks:
+  braindump:
+    driver: bridge
+
+volumes:
+  mssql-data:
+  web-node-modules:

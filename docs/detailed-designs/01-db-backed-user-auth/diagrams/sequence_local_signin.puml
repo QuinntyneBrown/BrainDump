@@ -1,0 +1,37 @@
+@startuml sequence_local_signin
+!theme plain
+skinparam sequenceMessageAlign center
+
+title Local Sign-In (PKCE) Against DB User
+
+actor Developer
+participant "Angular SPA" as SPA
+participant "AuthController" as AC
+participant "IUserRepository" as Repo
+participant "PasswordHasher" as Hasher
+participant "IMemoryCache" as Cache
+database "user table" as DB
+
+Developer -> SPA: Submit email + password
+SPA -> AC: POST /api/auth/authorize\n{email, password, codeChallenge, S256}
+AC -> AC: Check Jwt:UseLocalAuth\n(404 if disabled — L2-031 #5)
+AC -> Repo: FindByEmailAsync(email)
+Repo -> DB: SELECT * FROM user\nWHERE email = @e
+DB --> Repo: row | null
+Repo --> AC: User?
+AC -> Hasher: Verify(user.PasswordHash, password)
+Hasher --> AC: true/false
+AC -> Cache: Set(code → {email, challenge}, 5m)
+AC --> SPA: 200 { code }
+
+SPA -> AC: POST /api/auth/token\n{code, codeVerifier, authorization_code}
+AC -> Cache: TryGet(code)
+Cache --> AC: {email, challenge}
+AC -> AC: SHA256(verifier) == challenge?
+AC -> Repo: FindByEmailAsync(email)
+Repo -> DB: SELECT ...
+DB --> Repo: User
+AC -> AC: Issue JWT\nsub=user.Id, email=user.Email
+AC --> SPA: 200 { accessToken, Bearer, 3600 }
+
+@enduml

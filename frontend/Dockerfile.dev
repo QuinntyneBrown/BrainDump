@@ -1,0 +1,30 @@
+# Development image for the Angular dev server.
+# Source is mounted as a volume from the host (see docker-compose.yml's
+# `web` service) so edits hot-reload without rebuilding the image. The
+# package.json is the only file we copy in here — npm install runs once
+# inside the image so it's fully populated with the right native deps for
+# the container's Linux glibc, independent of the host's node_modules.
+
+FROM node:22-bookworm AS dev
+WORKDIR /workspace
+
+# Install dependencies before mounting the rest of the source so layer
+# caching survives source-only edits.
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# Source is bind-mounted at runtime; this COPY is a fallback for plain
+# `docker build && docker run` without compose volumes.
+COPY . .
+
+EXPOSE 4200
+
+# --host 0.0.0.0 so the port is reachable from outside the container.
+# --poll forces polling-based file watching, which is reliable across the
+# host/container boundary on Windows + WSL2 where inotify events from the
+# host filesystem don't always propagate.
+CMD ["npx", "ng", "serve", \
+     "--host", "0.0.0.0", \
+     "--port", "4200", \
+     "--poll", "2000", \
+     "--proxy-config", "proxy.conf.docker.json"]

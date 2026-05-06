@@ -15,6 +15,14 @@ logs/*
 *.db-shm
 *.db-wal
 
+# Local Compose environment overrides — committed template lives in .env.example.
+.env
+
+# Host-specific Compose overrides (e.g. ARM64 hosts that swap SQL Server for
+# Azure SQL Edge). Auto-loaded by `docker compose up`; not committed.
+docker-compose.override.yml
+docker-compose.override.yaml
+
 # Ad-hoc screenshots and recordings captured during development
 *.png
 *.webm

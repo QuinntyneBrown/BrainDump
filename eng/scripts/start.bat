@@ -1,27 +1,33 @@
 @echo off
 setlocal
 
-REM Launches the brain-dump backend and frontend in two separate console windows
-REM so the API and Angular dev server can run in parallel. Each window's title
-REM matches what stop.bat looks for, so the two scripts are paired.
+REM Click-to-run wrapper around the canonical local workflow:
+REM   docker compose up
+REM
+REM Brings up sqlserver -> api -> web. See README.md for details.
 
 set "REPO_ROOT=%~dp0..\.."
 for %%I in ("%REPO_ROOT%") do set "REPO_ROOT=%%~fI"
 
-set "BACKEND_TITLE=BrainDump.Api"
-set "FRONTEND_TITLE=BrainDump.Web"
+REM Seed .env from the committed template on first run so Compose has a
+REM password to inject. The template ships a development-only default.
+if not exist "%REPO_ROOT%\.env" (
+    if exist "%REPO_ROOT%\.env.example" (
+        echo Creating .env from .env.example ...
+        copy /Y "%REPO_ROOT%\.env.example" "%REPO_ROOT%\.env" >nul
+    )
+)
 
-echo Starting BrainDump backend (.NET API on http://localhost:5153)...
-start "%BACKEND_TITLE%" cmd /k "cd /d ""%REPO_ROOT%\backend\src\BrainDump.Api"" && dotnet run --launch-profile http"
-
-echo Starting BrainDump frontend (Angular dev server on http://localhost:4200)...
-start "%FRONTEND_TITLE%" cmd /k "cd /d ""%REPO_ROOT%\frontend"" && npm start"
-
-echo.
-echo Both processes are starting in separate windows.
-echo   Backend  : http://localhost:5153
+echo Starting BrainDump stack via docker compose ...
 echo   Frontend : http://localhost:4200
+echo   API      : http://localhost:5153
+echo   SQL      : localhost:1433
 echo.
-echo Run stop.bat in this folder to terminate both.
+echo Run stop.bat in this folder (or `docker compose down`) to stop everything.
+echo.
+
+pushd "%REPO_ROOT%"
+docker compose up
+popd
 
 endlocal
