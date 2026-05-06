@@ -29,6 +29,7 @@
 
 .bd-sidebar__body {
   flex: 1;
+  overflow-x: hidden;
   overflow-y: auto;
   padding: var(--bd-space-3) var(--bd-space-2);
   display: flex;
