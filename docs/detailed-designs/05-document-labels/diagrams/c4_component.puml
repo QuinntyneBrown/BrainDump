@@ -1,0 +1,22 @@
+@startuml c4_component
+!theme plain
+!include <C4/C4_Component>
+
+title Document Labels - Components inside BrainDump.Api
+
+Container_Boundary(api, "BrainDump.Api") {
+    Component(ctrl, "LabelsController", "ASP.NET", "GET /api/labels, PUT doc labels")
+    Component(setH, "SetDocumentLabelsHandler", "MediatR", "Diff + apply labels in tx")
+    Component(getH, "GetWorkspaceLabelsHandler", "MediatR", "SELECT name FROM label")
+    Component(repo, "Label repository", "EF Core", "AppDbContext access")
+}
+
+ContainerDb(db, "SQL Server", "T-SQL", "label, document_label")
+
+Rel(ctrl, setH, "Send")
+Rel(ctrl, getH, "Send")
+Rel(setH, repo, "Calls")
+Rel(getH, repo, "Calls")
+Rel(repo, db, "Read/Write")
+
+@enduml

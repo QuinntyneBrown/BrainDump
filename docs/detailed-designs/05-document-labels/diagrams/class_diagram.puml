@@ -1,0 +1,26 @@
+@startuml class_diagram
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+
+title Document Labels - Domain Model
+
+class Document {
+    +Id: int
+    +Title: string
+}
+
+class Label {
+    +Id: int
+    +Name: string  <<UNIQUE>>
+}
+
+class DocumentLabel {
+    +DocumentId: int  <<PK,FK>>
+    +LabelId: int  <<PK,FK>>
+}
+
+Document "1" -- "*" DocumentLabel
+Label "1" -- "*" DocumentLabel
+
+@enduml

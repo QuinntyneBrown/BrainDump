@@ -1,0 +1,35 @@
+@startuml sequence_move_node
+!theme plain
+skinparam sequenceMessageAlign center
+
+title Move Folder or Document
+
+actor Editor
+participant "BdPageTree" as Tree
+participant "MoveController" as Ctrl
+participant "MoveNodeHandler" as H
+database "SQL Server" as DB
+
+Editor -> Tree: Move "Designs" under "Product"
+Tree -> Ctrl: POST /api/move { kind, id, targetParentId, position }
+Ctrl -> H: Send(MoveNode)
+
+alt Cycle detected
+    H -> DB: SELECT descendants of source
+    DB --> H: descendant ids
+    H --> Ctrl: 400 Bad Request
+    Ctrl --> Tree: 400
+    Tree --> Editor: error toast
+else No cycle
+    H -> DB: BEGIN TX
+    H -> DB: UPDATE folder/document SET parent_id, position
+    DB --> H: ok
+    H -> DB: COMMIT
+    H --> Ctrl: 200 OK
+    Ctrl --> Tree: 200
+    Tree -> Ctrl: GET /api/workspace
+    Ctrl --> Tree: refreshed tree
+    Tree --> Editor: node visible at new location
+end
+
+@enduml

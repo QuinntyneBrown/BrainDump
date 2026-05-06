@@ -1,0 +1,50 @@
+@startuml class_diagram
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+
+title Documents and Folders - Domain Model
+
+class Folder {
+    +Id: int
+    +ParentId: int?
+    +Title: string
+    +Position: int
+}
+
+class Document {
+    +Id: int
+    +FolderId: int?
+    +Title: string
+    +Position: int
+    +CreatedAt: DateTime
+    +UpdatedAt: DateTime
+}
+
+class Section {
+    +Id: int
+    +DocumentId: int
+    +ParentId: int?
+    +Title: string
+    +Position: int
+}
+
+class Fact {
+    +Id: int
+    +SectionId: int
+    +Text: string
+    +Position: int
+}
+
+Folder "0..1" o-- "*" Folder : parent / children
+Folder "0..1" o-- "*" Document : contains
+Document "1" *-- "*" Section : owns (cascade)
+Section "0..1" o-- "*" Section : parent / children
+Section "1" *-- "*" Fact : owns (cascade)
+
+note right of Section
+  CHECK: section.document_id
+  matches parent's document_id
+end note
+
+@enduml

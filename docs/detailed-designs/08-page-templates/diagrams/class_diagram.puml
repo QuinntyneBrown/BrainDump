@@ -1,0 +1,41 @@
+@startuml class_diagram
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+
+title Page Templates - Domain Model
+
+class Template {
+    +Id: int
+    +Title: string
+    +Description: string?
+    +CreatedAt: DateTime
+}
+
+class TemplateSection {
+    +Id: int
+    +TemplateId: int
+    +ParentId: int?
+    +Title: string
+    +Position: int
+}
+
+class TemplateFact {
+    +Id: int
+    +TemplateSectionId: int
+    +Text: string
+    +Position: int
+}
+
+class Document {
+    +Id: int
+    +Title: string
+}
+
+Template "1" *-- "*" TemplateSection : owns (cascade)
+TemplateSection "0..1" o-- "*" TemplateSection : parent / children
+TemplateSection "1" *-- "*" TemplateFact : owns (cascade)
+
+Template ..> Document : instantiated as (deep-copy, independent)
+
+@enduml

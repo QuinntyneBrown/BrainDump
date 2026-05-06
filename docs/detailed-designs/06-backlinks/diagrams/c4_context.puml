@@ -1,0 +1,12 @@
+@startuml c4_context
+!theme plain
+!include <C4/C4_Context>
+
+title Backlinks - System Context
+
+Person(editor, "Editor")
+System(bd, "BrainDump", "Workspace with cross-document backlinks")
+
+Rel(editor, bd, "Writes [[wiki-links]] and views backlinks", "HTTPS")
+
+@enduml

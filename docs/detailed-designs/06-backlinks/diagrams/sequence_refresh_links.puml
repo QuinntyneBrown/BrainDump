@@ -1,0 +1,35 @@
+@startuml sequence_refresh_links
+!theme plain
+skinparam sequenceMessageAlign center
+
+title Mutation Refreshes Document Links
+
+actor Editor
+participant "FactsController" as Ctrl
+participant "UpdateFactHandler" as H
+participant "DocumentLinkRefresher" as R
+participant "WikiLinkParser" as P
+database "SQL Server" as DB
+
+Editor -> Ctrl: PUT /api/facts/9 { text: "see [[L1 architecture]]" }
+Ctrl -> H: Send
+
+H -> DB: BEGIN TX
+H -> DB: UPDATE fact SET text = ...
+DB --> H: 1 row
+H -> R: RefreshAsync(documentId)
+
+R -> DB: SELECT facts.text, sections.title for document
+DB --> R: rows
+R -> P: ExtractLinks(strings)
+P --> R: [{ targetId: 17 }]
+R -> DB: DELETE FROM document_link WHERE source = doc
+R -> DB: INSERT (source, 17)
+DB --> R: ok
+
+R --> H: ok
+H -> DB: COMMIT
+H --> Ctrl: 200 OK
+Ctrl --> Editor: saved; right rail of doc 17 will now show this doc as a backlink
+
+@enduml

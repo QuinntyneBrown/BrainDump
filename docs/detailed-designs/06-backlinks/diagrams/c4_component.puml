@@ -1,0 +1,21 @@
+@startuml c4_component
+!theme plain
+!include <C4/C4_Component>
+
+title Backlinks - Components inside BrainDump.Application
+
+Container_Boundary(app, "BrainDump.Application") {
+    Component(parser, "WikiLinkParser", "Pure C#", "Extracts [[id:N]] and [[title]] refs")
+    Component(refresh, "DocumentLinkRefresher", "C#", "Replaces document_link rows in tx")
+    Component(mutHandlers, "Section/Fact/Document mutation handlers", "MediatR", "Call refresher inline")
+    Component(getH, "GetBacklinksHandler", "MediatR", "Query backlinks + excerpt")
+}
+
+ContainerDb(db, "SQL Server", "T-SQL", "document_link")
+
+Rel(mutHandlers, refresh, "RefreshAsync(documentId)")
+Rel(refresh, parser, "ExtractLinks")
+Rel(refresh, db, "DELETE+INSERT document_link")
+Rel(getH, db, "SELECT backlinks JOIN document")
+
+@enduml

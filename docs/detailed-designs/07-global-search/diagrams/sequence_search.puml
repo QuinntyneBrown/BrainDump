@@ -1,0 +1,37 @@
+@startuml sequence_search
+!theme plain
+skinparam sequenceMessageAlign center
+
+title Search and Open a Result
+
+actor Editor
+participant "BdSearchPalette" as Pal
+participant "SearchService" as Svc
+participant "SearchController" as Ctrl
+participant "SearchHandler" as H
+database "SQL Server" as DB
+participant "TabsService" as Tabs
+
+Editor -> Pal: Cmd+K, type "brain"
+Pal -> Svc: query("brain")
+
+note over Svc: 150ms debounce
+
+Svc -> Ctrl: GET /api/search?q=brain
+Ctrl -> H: Send
+H -> DB: SELECT ... CONTAINS(document.title,'brain*')
+H -> DB: SELECT ... CONTAINS(section.title,'brain*')
+H -> DB: SELECT ... CONTAINS(fact.text,'brain*')
+H -> DB: SELECT ... WHERE label.name = 'brain'
+DB --> H: rows
+H -> H: rank, dedupe, snippet, top N
+H --> Ctrl: 200 [results]
+Ctrl --> Svc: 200
+Svc --> Pal: results
+Pal --> Editor: ranked list
+
+Editor -> Pal: Enter
+Pal -> Tabs: openTab(documentId)
+Tabs --> Editor: document opens in active pane
+
+@enduml

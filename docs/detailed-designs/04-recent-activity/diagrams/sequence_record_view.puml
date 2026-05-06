@@ -1,0 +1,26 @@
+@startuml sequence_record_view
+!theme plain
+skinparam sequenceMessageAlign center
+
+title Record View and Read Recents
+
+actor Editor
+participant "TabsService" as Tabs
+participant "RecentsService" as Svc
+participant "RecentsController" as Ctrl
+database "SQL Server" as DB
+
+Editor -> Tabs: openTab(42)
+Tabs -> Svc: recordView(42)
+Svc -> Ctrl: POST /api/documents/42/view
+Ctrl -> DB: MERGE user_document_view\n  ON (uid, did) WHEN MATCHED UPDATE viewed_at\n  WHEN NOT MATCHED INSERT
+DB --> Ctrl: ok
+Ctrl --> Svc: 204
+
+Svc -> Ctrl: GET /api/recent?limit=10
+Ctrl -> DB: SELECT TOP 10 d.id, d.title, v.viewed_at\n  FROM user_document_view v\n  JOIN document d ON v.document_id = d.id\n  WHERE v.user_id = @uid\n  ORDER BY v.viewed_at DESC
+DB --> Ctrl: 10 rows
+Ctrl --> Svc: 200 [{id, title, viewedAt}, ...]
+Svc --> Editor: recents list updated
+
+@enduml

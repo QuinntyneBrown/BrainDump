@@ -1,0 +1,18 @@
+@startuml c4_container
+!theme plain
+!include <C4/C4_Container>
+
+title Global Search - Containers
+
+Person(editor, "Editor")
+System_Boundary(bd, "BrainDump") {
+    Container(spa, "SPA", "Angular", "Cmd+K palette modal")
+    Container(api, "API", ".NET 9", "GET /api/search")
+    ContainerDb(db, "SQL Server", "Azure SQL", "Full-text catalog bd_search\nindexes on title/text/label")
+}
+
+Rel(editor, spa, "Cmd+K", "HTTPS")
+Rel(spa, api, "/api/search?q=...", "JSON")
+Rel(api, db, "CONTAINS(...)", "T-SQL")
+
+@enduml

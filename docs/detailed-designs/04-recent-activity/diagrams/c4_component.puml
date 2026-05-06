@@ -1,0 +1,27 @@
+@startuml c4_component
+!theme plain
+!include <C4/C4_Component>
+
+title Recent Activity - Components
+
+Container_Boundary(spa, "Angular SPA") {
+    Component(rsvc, "RecentsService", "Angular", "recent$ signal; recordView()")
+    Component(rlist, "Recents list UI", "Angular", "Page tree sidebar section")
+}
+
+Container_Boundary(api, "BrainDump.Api") {
+    Component(ctrl, "RecentsController", "ASP.NET", "/api/recent + view ping")
+    Component(rec, "RecordViewHandler", "MediatR", "MERGE upsert")
+    Component(get, "GetRecentDocumentsHandler", "MediatR", "Top N by viewed_at")
+}
+
+ContainerDb(db, "SQL Server", "T-SQL", "user_document_view")
+
+Rel(rlist, rsvc, "reads")
+Rel(rsvc, ctrl, "JSON")
+Rel(ctrl, rec, "Send")
+Rel(ctrl, get, "Send")
+Rel(rec, db, "MERGE")
+Rel(get, db, "SELECT TOP N")
+
+@enduml

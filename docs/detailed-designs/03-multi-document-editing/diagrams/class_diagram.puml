@@ -1,0 +1,26 @@
+@startuml class_diagram
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+
+title Multi-Document Editing - Domain Model
+
+class User {
+    +Id: int
+    +Email: string
+}
+
+class UserTabState {
+    +UserId: int  <<PK,FK>>
+    +PanesJson: string
+}
+
+class TabPane <<JSON>> {
+    +tabs: int[]
+    +activeIndex: int
+}
+
+User "1" -- "0..1" UserTabState
+UserTabState "1" o-- "1..2" TabPane : panes (JSON array)
+
+@enduml

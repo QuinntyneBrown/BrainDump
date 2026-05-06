@@ -1,0 +1,31 @@
+@startuml sequence_create_document
+!theme plain
+skinparam sequenceMessageAlign center
+
+title Create Document and Open It
+
+actor Editor
+participant "BdPageTree" as Tree
+participant "DocumentsController" as Ctrl
+participant "CreateDocumentHandler" as H1
+participant "GetDocumentTreeHandler" as H2
+database "SQL Server" as DB
+
+Editor -> Tree: + New document
+Tree -> Ctrl: POST /api/documents { folderId, title, position }
+Ctrl -> H1: Send(CreateDocument)
+H1 -> DB: INSERT document (...)
+DB --> H1: id = 42
+H1 --> Ctrl: 42
+Ctrl --> Tree: 201 { id: 42 }
+Tree -> Ctrl: GET /api/workspace
+Ctrl --> Tree: { folders, documents }
+Tree -> Ctrl: GET /api/documents/42/tree
+Ctrl -> H2: Send(GetDocumentTree(42))
+H2 -> DB: SELECT sections, facts WHERE document_id = 42
+DB --> H2: empty
+H2 --> Ctrl: { sections: [], facts: [] }
+Ctrl --> Tree: 200
+Tree --> Editor: empty document open
+
+@enduml

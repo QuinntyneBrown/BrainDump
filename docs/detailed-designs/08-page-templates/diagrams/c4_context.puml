@@ -1,0 +1,12 @@
+@startuml c4_context
+!theme plain
+!include <C4/C4_Context>
+
+title Page Templates - System Context
+
+Person(editor, "Editor")
+System(bd, "BrainDump", "Workspace with reusable page templates")
+
+Rel(editor, bd, "Saves and instantiates templates", "HTTPS")
+
+@enduml

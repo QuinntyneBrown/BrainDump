@@ -1,0 +1,39 @@
+@startuml sequence_open_and_split
+!theme plain
+skinparam sequenceMessageAlign center
+
+title Open Second Tab and Split View
+
+actor Editor
+participant "BdPageTree" as Tree
+participant "TabsService" as Svc
+participant "BdTabBar" as Bar
+participant "TabsController" as Ctrl
+database "SQL Server" as DB
+
+Editor -> Tree: click "l1-architecture.md"
+Tree -> Svc: openTab(17)
+Svc -> Svc: panes = [{ tabs:[42,17], activeIndex:1 }]
+Svc -> Bar: tabs$ next
+Bar --> Editor: second tab visible, active
+
+note over Svc: 1s debounce
+
+Svc -> Ctrl: PUT /api/tabs { panes }
+Ctrl -> DB: UPSERT user_tab_state
+DB --> Ctrl: ok
+Ctrl --> Svc: 204
+
+Editor -> Bar: click Split toggle
+Bar -> Svc: toggleSplit()
+Svc -> Svc: panes = [{tabs:[42],idx:0},{tabs:[17],idx:0}]
+Svc -> Bar: tabs$ next
+Bar --> Editor: editor splits, two panes side-by-side
+
+note over Svc: persist after debounce
+
+Svc -> Ctrl: PUT /api/tabs
+Ctrl -> DB: UPSERT
+DB --> Ctrl: ok
+
+@enduml

@@ -1,0 +1,29 @@
+@startuml class_diagram
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+
+title Global Search - Search Result Shape
+
+class SearchResult <<DTO>> {
+    +DocumentId: int
+    +Title: string
+    +MatchedField: string
+    +Snippet: string
+    +Score: double
+}
+
+note right of SearchResult
+  matchedField in {
+    "title", "section", "fact", "label"
+  }
+end note
+
+class FullTextCatalog <<DB object>> {
+    +Name: bd_search
+    +Indexed: document.title
+    +Indexed: section.title
+    +Indexed: fact.text
+}
+
+@enduml

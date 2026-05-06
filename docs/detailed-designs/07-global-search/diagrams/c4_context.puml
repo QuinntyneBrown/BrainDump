@@ -1,0 +1,12 @@
+@startuml c4_context
+!theme plain
+!include <C4/C4_Context>
+
+title Global Search - System Context
+
+Person(editor, "Editor")
+System(bd, "BrainDump", "Workspace with global Cmd+K search")
+
+Rel(editor, bd, "Searches workspace by keyword", "HTTPS")
+
+@enduml

@@ -1,0 +1,24 @@
+@startuml c4_component
+!theme plain
+!include <C4/C4_Component>
+
+title Global Search - Components
+
+Container_Boundary(spa, "Angular SPA") {
+    Component(palette, "BdSearchPalette", "Angular", "Cmd+K modal")
+    Component(svc, "SearchService", "Angular", "debounced query")
+}
+
+Container_Boundary(api, "BrainDump.Api") {
+    Component(ctrl, "SearchController", "ASP.NET", "GET /api/search")
+    Component(handler, "SearchHandler", "MediatR", "FTS over title/text/label")
+}
+
+ContainerDb(db, "SQL Server", "T-SQL", "Full-text catalog bd_search")
+
+Rel(palette, svc, "query")
+Rel(svc, ctrl, "GET /api/search?q=...")
+Rel(ctrl, handler, "Send")
+Rel(handler, db, "CONTAINS()")
+
+@enduml

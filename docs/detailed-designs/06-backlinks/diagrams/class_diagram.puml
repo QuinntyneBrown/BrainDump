@@ -1,0 +1,21 @@
+@startuml class_diagram
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+
+title Backlinks - Domain Model
+
+class Document {
+    +Id: int
+    +Title: string
+}
+
+class DocumentLink {
+    +SourceDocumentId: int  <<PK,FK>>
+    +TargetDocumentId: int  <<PK,FK>>
+}
+
+Document "1" -- "*" DocumentLink : as source
+Document "1" -- "*" DocumentLink : as target
+
+@enduml

@@ -1,0 +1,18 @@
+@startuml c4_container
+!theme plain
+!include <C4/C4_Container>
+
+title Document Labels - Containers
+
+Person(editor, "Editor")
+System_Boundary(bd, "BrainDump") {
+    Container(spa, "SPA", "Angular", "Label chips, filter chips")
+    Container(api, "API", ".NET 9", "/api/labels, /api/documents/{id}/labels")
+    ContainerDb(db, "SQL Server", "Azure SQL", "label, document_label")
+}
+
+Rel(editor, spa, "Uses", "HTTPS")
+Rel(spa, api, "Read/write labels", "JSON")
+Rel(api, db, "Read/write labels", "T-SQL")
+
+@enduml

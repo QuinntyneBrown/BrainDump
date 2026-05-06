@@ -1,0 +1,12 @@
+@startuml c4_context
+!theme plain
+!include <C4/C4_Context>
+
+title Recent Activity - System Context
+
+Person(editor, "Editor")
+System(bd, "BrainDump", "Workspace with per-user recents")
+
+Rel(editor, bd, "Opens documents; sees recents", "HTTPS")
+
+@enduml

@@ -1,0 +1,12 @@
+@startuml c4_context
+!theme plain
+!include <C4/C4_Context>
+
+title Document Labels - System Context
+
+Person(editor, "Editor")
+System(bd, "BrainDump", "Workspace with workspace-scoped labels")
+
+Rel(editor, bd, "Tags and filters documents by label", "HTTPS")
+
+@enduml

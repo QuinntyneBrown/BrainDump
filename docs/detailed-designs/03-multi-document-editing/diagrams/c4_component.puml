@@ -1,0 +1,26 @@
+@startuml c4_component
+!theme plain
+!include <C4/C4_Component>
+
+title Multi-Document Editing - Components
+
+Container_Boundary(spa, "Angular SPA") {
+    Component(tabBar, "BdTabBar", "Angular", "Renders tabs + split toggle")
+    Component(splitEditor, "BdSplitEditor", "Angular", "Two pane wrapper")
+    Component(tabSvc, "TabsService", "Angular", "tab state signal + persistence")
+}
+
+Container_Boundary(api, "BrainDump.Api") {
+    Component(ctrl, "TabsController", "ASP.NET", "/api/tabs")
+    Component(handler, "GetTabsHandler / PutTabsHandler", "MediatR", "")
+}
+
+ContainerDb(db, "SQL Server", "T-SQL", "user_tab_state")
+
+Rel(tabBar, tabSvc, "events")
+Rel(splitEditor, tabSvc, "reads tab state")
+Rel(tabSvc, ctrl, "GET/PUT /api/tabs", "JSON")
+Rel(ctrl, handler, "IMediator.Send")
+Rel(handler, db, "SELECT/UPSERT user_tab_state")
+
+@enduml

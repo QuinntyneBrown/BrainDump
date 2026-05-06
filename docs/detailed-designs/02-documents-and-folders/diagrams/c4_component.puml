@@ -1,0 +1,25 @@
+@startuml c4_component
+!theme plain
+!include <C4/C4_Component>
+
+title Documents and Folders - Components inside BrainDump.Api
+
+Container_Boundary(api, "BrainDump.Api") {
+    Component(foldersCtrl, "FoldersController", "ASP.NET", "POST/PUT/DELETE /api/folders")
+    Component(docsCtrl, "DocumentsController", "ASP.NET", "POST/PUT/DELETE /api/documents, GET tree")
+    Component(moveCtrl, "MoveController", "ASP.NET", "POST /api/move")
+    Component(wsCtrl, "WorkspaceController", "ASP.NET", "GET /api/workspace")
+    Component(handlers, "MediatR Handlers", "C#", "Folder/Document/Move/GetDocumentTree")
+    Component(repos, "Folder + Document repositories", "EF Core", "AppDbContext access")
+}
+
+ContainerDb(db, "SQL Server", "T-SQL", "folder, document, section, fact")
+
+Rel(foldersCtrl, handlers, "IMediator.Send")
+Rel(docsCtrl, handlers, "IMediator.Send")
+Rel(moveCtrl, handlers, "IMediator.Send")
+Rel(wsCtrl, handlers, "IMediator.Send")
+Rel(handlers, repos, "Calls")
+Rel(repos, db, "Reads/Writes")
+
+@enduml

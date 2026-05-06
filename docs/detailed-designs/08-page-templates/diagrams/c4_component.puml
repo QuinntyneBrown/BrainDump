@@ -1,0 +1,24 @@
+@startuml c4_component
+!theme plain
+!include <C4/C4_Component>
+
+title Page Templates - Components inside BrainDump.Application
+
+Container_Boundary(app, "BrainDump.Application") {
+    Component(getH, "GetTemplatesHandler", "MediatR", "List templates")
+    Component(crH, "CreateTemplateHandler", "MediatR", "")
+    Component(saveH, "SaveDocumentAsTemplateHandler", "MediatR", "Doc tree -> template tree")
+    Component(fromH, "CreateDocumentFromTemplateHandler", "MediatR", "Deep-copy template -> document")
+}
+
+ContainerDb(db, "SQL Server", "T-SQL", "template, template_section, template_fact")
+ContainerDb(docDb, "SQL Server", "T-SQL", "document, section, fact")
+
+Rel(getH, db, "SELECT")
+Rel(crH, db, "INSERT template")
+Rel(saveH, db, "INSERT template_*")
+Rel(saveH, docDb, "SELECT section/fact")
+Rel(fromH, db, "SELECT template_*")
+Rel(fromH, docDb, "INSERT document/section/fact")
+
+@enduml

@@ -1,0 +1,31 @@
+@startuml class_diagram
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+
+title Recent Activity - Domain Model
+
+class User {
+    +Id: int
+    +Email: string
+}
+
+class Document {
+    +Id: int
+    +Title: string
+}
+
+class UserDocumentView {
+    +UserId: int  <<PK,FK>>
+    +DocumentId: int  <<PK,FK>>
+    +ViewedAt: DateTime
+}
+
+User "1" -- "*" UserDocumentView
+Document "1" -- "*" UserDocumentView
+
+note right of UserDocumentView
+  Index (user_id, viewed_at DESC)
+end note
+
+@enduml

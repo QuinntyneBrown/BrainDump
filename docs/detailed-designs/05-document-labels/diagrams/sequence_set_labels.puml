@@ -1,0 +1,32 @@
+@startuml sequence_set_labels
+!theme plain
+skinparam sequenceMessageAlign center
+
+title Set Labels on a Document
+
+actor Editor
+participant "Right rail" as UI
+participant "LabelsController" as Ctrl
+participant "SetDocumentLabelsHandler" as H
+database "SQL Server" as DB
+
+Editor -> UI: type "wip"
+UI -> Ctrl: PUT /api/documents/42/labels { labels: ["engineering","wip"] }
+Ctrl -> H: Send
+
+H -> DB: BEGIN TX
+H -> DB: SELECT id FROM label WHERE name IN (...)
+DB --> H: existing label ids
+H -> DB: INSERT INTO label (name) for missing
+DB --> H: new label ids
+H -> DB: SELECT label_id FROM document_label WHERE document_id=42
+DB --> H: current pairs
+H -> DB: INSERT/DELETE pairs to match desired set
+DB --> H: ok
+H -> DB: COMMIT
+
+H --> Ctrl: 200 OK
+Ctrl --> UI: 200
+UI --> Editor: chips render
+
+@enduml

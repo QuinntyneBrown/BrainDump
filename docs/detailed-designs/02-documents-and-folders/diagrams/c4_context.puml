@@ -1,0 +1,14 @@
+@startuml c4_context
+!theme plain
+!include <C4/C4_Context>
+
+title Documents and Folders - System Context
+
+Person(editor, "Editor", "Single-user owner of the workspace")
+System(bd, "BrainDump", "Multi-document workspace; folder tree, documents, sections, facts")
+System_Ext(idp, "Identity Provider", "Local PKCE (dev) or Microsoft Entra ID (prod)")
+
+Rel(editor, bd, "Authors and reads documents", "HTTPS")
+Rel(bd, idp, "Validates JWTs", "OIDC")
+
+@enduml

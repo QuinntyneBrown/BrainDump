@@ -1,0 +1,37 @@
+@startuml sequence_from_template
+!theme plain
+skinparam sequenceMessageAlign center
+
+title Create Document From Template
+
+actor Editor
+participant "BdTemplatesDialog" as Dlg
+participant "DocumentsController" as Ctrl
+participant "CreateDocumentFromTemplateHandler" as H
+database "SQL Server" as DB
+
+Editor -> Dlg: choose "Meeting notes" template
+Dlg -> Ctrl: POST /api/documents { folderId, title, position, templateId }
+Ctrl -> H: Send
+
+H -> DB: BEGIN TX
+H -> DB: INSERT document
+DB --> H: doc.id
+H -> DB: SELECT template_section ORDER BY parent_id NULLS FIRST, position
+DB --> H: rows
+loop for each template section
+    H -> DB: INSERT section (doc.id, mapped parent, title, position)
+    DB --> H: section.id
+end
+H -> DB: SELECT template_fact
+DB --> H: rows
+loop for each template fact
+    H -> DB: INSERT fact (mapped section, text, position)
+end
+H -> DB: COMMIT
+
+H --> Ctrl: 201 { id }
+Ctrl --> Dlg: 201
+Dlg --> Editor: new document opens with template tree
+
+@enduml
