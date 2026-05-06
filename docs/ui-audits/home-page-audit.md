@@ -233,7 +233,7 @@ Design region: `r0lBi1` ("status bar"), 32 px tall, fill `$color-surface-2`, pad
 - [x] Show nav-item labels under icons in rail mode
 - [x] Change rail active highlight from circle to rounded square (M3 indicator)
 - [x] Add avatar at bottom of side rail
-- [ ] Widen rail to 80 px, increase rail-item height to ~64 px
+- [x] Widen rail to 80 px, increase rail-item height to ~64 px
 - [ ] Replace sidebar header `+` icon button with "+ New" tonal text button
 - [ ] Add search field below sidebar header
 - [ ] Add filter chips row (All, #facts, #wip)

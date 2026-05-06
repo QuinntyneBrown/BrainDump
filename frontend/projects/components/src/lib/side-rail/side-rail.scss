@@ -2,13 +2,14 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: var(--bd-space-1);
-  width: 64px;
+  gap: var(--bd-space-2);
+  width: 80px;
   flex-shrink: 0;
-  padding: var(--bd-space-3) var(--bd-space-2);
+  padding: var(--bd-space-3) var(--bd-space-3);
   background: var(--bd-color-surface);
   border-right: 1px solid var(--bd-color-border);
   height: 100%;
   box-sizing: border-box;
   overflow-y: auto;
+  overflow-x: hidden;
 }

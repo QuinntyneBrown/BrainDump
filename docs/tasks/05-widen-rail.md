@@ -1,4 +1,4 @@
-# 05 — Widen rail to 80 px and grow item height to 64 px
+# 05 — Widen rail to 80 px and grow item height to 64 px ✅ Completed
 
 **Audit reference:** §1.5, §1.6
 **Design nodes:** `t2jT2.width = 80`, `padding: [0, 12]`, `gap: $space-2`. Each nav item: `height: 64`, `width: 64`.
