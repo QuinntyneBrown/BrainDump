@@ -19,7 +19,7 @@ Each markdown file in this folder describes a single discrete UI change derived 
 03. [Change rail active highlight from circle to rounded square](03-rail-active-indicator-shape.md) ✅
 04. [Add avatar at bottom of side rail](04-add-rail-avatar.md) ✅
 05. [Widen rail to 80 px and grow item height](05-widen-rail.md) ✅
-06. [Replace sidebar `+` icon button with "+ New" tonal button](06-sidebar-new-button.md)
+06. [Replace sidebar `+` icon button with "+ New" tonal button](06-sidebar-new-button.md) ✅
 07. [Add search field below sidebar header](07-sidebar-search-field.md)
 08. [Add filter chips row](08-sidebar-filter-chips.md)
 09. [Enrich note item with icon, tags, and timestamp](09-note-item-structure.md)

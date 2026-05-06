@@ -1,4 +1,4 @@
-# 06 — Replace sidebar `+` icon button with "+ New" tonal button
+# 06 — Replace sidebar `+` icon button with "+ New" tonal button ✅ Completed
 
 **Audit reference:** §2.1
 **Design node:** `V33Xc` — instance of `yfjZu` (Component/Button/Tonal); descendant override `ZEG8c.content = "+  New"`.

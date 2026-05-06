@@ -15,6 +15,7 @@ import {
   TreeDto,
 } from 'api';
 import {
+  BdButton,
   BdConfirmDialog,
   BdConfirmDialogData,
   BdFab,
@@ -62,6 +63,7 @@ interface SectionSummary {
     BdMonacoLine,
     BdFab,
     BdIconButton,
+    BdButton,
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss',

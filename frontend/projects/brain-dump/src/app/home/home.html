@@ -23,13 +23,15 @@
 
   <bd-sidebar heading="Notes">
     <ng-container bdSidebarHeaderActions>
-      <bd-icon-button
+      <bd-button
+        variant="tonal"
         icon="add"
         ariaLabel="Add section"
-        tone="primary"
         (click)="onAddRootSection()"
         data-testid="add-section"
-      />
+      >
+        New
+      </bd-button>
     </ng-container>
 
     @if (rootSections().length === 0 && !loading()) {
