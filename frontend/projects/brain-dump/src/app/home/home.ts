@@ -28,6 +28,7 @@ import {
   BdSideRail,
   BdSidebar,
   BdSnackbar,
+  BdTextField,
   BdTopAppBar,
   BdTopAppBarAction,
 } from 'components';
@@ -64,6 +65,7 @@ interface SectionSummary {
     BdFab,
     BdIconButton,
     BdButton,
+    BdTextField,
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss',
@@ -80,6 +82,7 @@ export class Home {
 
   protected readonly tree = signal<TreeDto>({ sections: [], facts: [] });
   protected readonly loading = signal(true);
+  protected readonly searchQuery = signal('');
 
   protected readonly topBarActions: readonly BdTopAppBarAction[] = [
     { id: 'search', icon: 'search', ariaLabel: 'Search notes' },

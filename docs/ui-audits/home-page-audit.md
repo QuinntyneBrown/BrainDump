@@ -235,7 +235,7 @@ Design region: `r0lBi1` ("status bar"), 32 px tall, fill `$color-surface-2`, pad
 - [x] Add avatar at bottom of side rail
 - [x] Widen rail to 80 px, increase rail-item height to ~64 px
 - [x] Replace sidebar header `+` icon button with "+ New" tonal text button
-- [ ] Add search field below sidebar header
+- [x] Add search field below sidebar header
 - [ ] Add filter chips row (All, #facts, #wip)
 - [ ] Add document icon, tag chips, and relative-time caption to each note item
 - [ ] Add `description` icon, `facts` badge, and "Edited Xm ago" caption to the editor toolbar left

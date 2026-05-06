@@ -34,6 +34,15 @@
       </bd-button>
     </ng-container>
 
+    <bd-text-field
+      class="home-shell__search"
+      type="search"
+      placeholder="Search notes…"
+      leadingIcon="search"
+      [(value)]="searchQuery"
+      data-testid="sidebar-search"
+    />
+
     @if (rootSections().length === 0 && !loading()) {
       <div class="home-shell__empty-aside">
         <p>No sections yet. Click + to add your first one.</p>
