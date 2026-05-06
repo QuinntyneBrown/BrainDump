@@ -17,13 +17,13 @@ public class SectionsController : ControllerBase
         _mediator = mediator;
     }
 
-    public record CreateSectionRequest(int? ParentId, string Title, int Position);
+    public record CreateSectionRequest(int DocumentId, int? ParentId, string Title, int Position);
     public record UpdateSectionRequest(int? ParentId, string Title, int Position);
 
     [HttpPost]
     public async Task<ActionResult<int>> Create([FromBody] CreateSectionRequest body, CancellationToken cancellationToken)
     {
-        var id = await _mediator.Send(new CreateSection(body.ParentId, body.Title, body.Position), cancellationToken);
+        var id = await _mediator.Send(new CreateSection(body.DocumentId, body.ParentId, body.Title, body.Position), cancellationToken);
         return Ok(id);
     }
 

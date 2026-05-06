@@ -1,6 +1,6 @@
 using BrainDump.Api.Auth;
 using BrainDump.Api.Middleware;
-using BrainDump.Application.Features.Tree;
+using BrainDump.Application.Features.Workspace;
 using BrainDump.Application.Interfaces;
 using BrainDump.Infrastructure;
 using BrainDump.Infrastructure.Persistence;
@@ -26,7 +26,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
 builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(typeof(GetTreeQuery).Assembly));
+    cfg.RegisterServicesFromAssembly(typeof(GetWorkspace).Assembly));
 
 builder.Services.AddInfrastructure(builder.Configuration);
 

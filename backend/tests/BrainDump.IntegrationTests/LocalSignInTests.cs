@@ -54,17 +54,16 @@ public class LocalSignInTests
         Assert.Equal("Bearer", tokenBody.GetProperty("tokenType").GetString());
         Assert.True(tokenBody.GetProperty("expiresIn").GetInt32() > 0);
 
-        // L2-031 #4: the token must satisfy the bearer pipeline. /api/tree
-        // hits the DB on Sqlite in-memory which is empty — so we expect a
-        // status that is *not* 401 (authorized to proceed), regardless of
-        // whether the handler returns 200 or 500.
-        using var authedReq = new HttpRequestMessage(HttpMethod.Get, "/api/tree");
+        // L2-031 #4: the token must satisfy the bearer pipeline. /api/workspace
+        // is the canonical authenticated read after slice 02 replaced the
+        // single-doc /api/tree endpoint.
+        using var authedReq = new HttpRequestMessage(HttpMethod.Get, "/api/workspace");
         authedReq.Headers.Authorization = new("Bearer", accessToken);
         var authed = await client.SendAsync(authedReq);
         Assert.NotEqual(HttpStatusCode.Unauthorized, authed.StatusCode);
 
         // And confirm the same endpoint refuses an unauthenticated call.
-        var anon = await client.GetAsync("/api/tree");
+        var anon = await client.GetAsync("/api/workspace");
         Assert.Equal(HttpStatusCode.Unauthorized, anon.StatusCode);
     }
 

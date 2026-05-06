@@ -41,6 +41,8 @@ public static class DependencyInjection
 
         services.AddScoped<IAppDbContext>(sp => sp.GetRequiredService<AppDbContext>());
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IFolderRepository, FolderRepository>();
+        services.AddScoped<IDocumentRepository, DocumentRepository>();
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
         services.AddScoped<ICurrentUser, CurrentUserAccessor>();
 
