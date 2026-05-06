@@ -1,0 +1,37 @@
+<div class="bd-tab-bar" role="tablist">
+  @for (tab of tabs(); track tab.id; let idx = $index) {
+    <button
+      type="button"
+      class="bd-tab-bar__tab"
+      role="tab"
+      [attr.aria-selected]="idx === activeIndex()"
+      [attr.data-active]="idx === activeIndex()"
+      [attr.data-tab-id]="tab.id"
+      (mousedown)="onTabClick(idx, $event)"
+    >
+      <mat-icon class="bd-tab-bar__icon">description</mat-icon>
+      <span class="bd-tab-bar__title">{{ tab.title }}</span>
+      <mat-icon
+        class="bd-tab-bar__close"
+        role="button"
+        aria-label="Close tab"
+        (click)="onClose(idx, $event)"
+      >close</mat-icon>
+    </button>
+  }
+  <span class="bd-tab-bar__spacer"></span>
+  @if (canSplit()) {
+    <button
+      type="button"
+      class="bd-tab-bar__split"
+      [attr.aria-pressed]="splitActive()"
+      [attr.data-active]="splitActive()"
+      (click)="onSplit()"
+      aria-label="Toggle split view"
+      data-testid="split-toggle"
+    >
+      <mat-icon>vertical_split</mat-icon>
+      <span>Split</span>
+    </button>
+  }
+</div>

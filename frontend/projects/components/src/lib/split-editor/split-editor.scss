@@ -1,0 +1,22 @@
+:host {
+  display: flex;
+  flex-direction: row;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+::ng-deep > * {
+  flex: 1 1 50%;
+  min-width: 0;
+  min-height: 0;
+}
+
+:host([data-split='true']) ::ng-deep > * + * {
+  border-left: 1px solid var(--bd-color-border);
+}
+
+:host(:not([data-split='true'])) ::ng-deep > * + * {
+  display: none;
+}
