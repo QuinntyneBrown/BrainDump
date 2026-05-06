@@ -1,4 +1,4 @@
-# 19 — Fix editor-body background token
+# 19 — Fix editor-body background token ✅ Completed
 
 **Audit reference:** §7.2
 **Design intent:** code area (`S1v8d`) and editor body (`Tby2u`) sit on `$color-surface`, not the page-level `$color-bg`.
