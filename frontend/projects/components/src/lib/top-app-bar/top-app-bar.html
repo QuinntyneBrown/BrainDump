@@ -1,0 +1,18 @@
+<mat-toolbar class="bd-top-app-bar">
+  @if (leadingIcon(); as i) {
+    <bd-icon-button
+      [icon]="i"
+      [ariaLabel]="leadingAriaLabel()"
+      (click)="leadingClick.emit()"
+    />
+  }
+  <h1 class="bd-top-app-bar__title">{{ title() }}</h1>
+  <span class="bd-top-app-bar__spacer"></span>
+  @for (action of actions(); track action.id ?? action.icon) {
+    <bd-icon-button
+      [icon]="action.icon"
+      [ariaLabel]="action.ariaLabel"
+      (click)="actionClick.emit(action)"
+    />
+  }
+</mat-toolbar>

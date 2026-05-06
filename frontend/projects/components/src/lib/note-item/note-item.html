@@ -1,0 +1,7 @@
+<span class="bd-note-item__title">{{ title() }}</span>
+@if (preview(); as p) {
+  <span class="bd-note-item__preview">{{ p }}</span>
+}
+@if (meta(); as m) {
+  <span class="bd-note-item__meta">{{ m }}</span>
+}

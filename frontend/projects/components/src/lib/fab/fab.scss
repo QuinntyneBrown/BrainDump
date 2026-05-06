@@ -1,0 +1,14 @@
+:host {
+  display: inline-flex;
+}
+
+.bd-fab {
+  --mdc-fab-container-color: var(--bd-color-primary-container);
+  --mdc-fab-icon-color: var(--bd-color-primary);
+  --mat-fab-foreground-color: var(--bd-color-primary);
+  --mdc-fab-container-shape: var(--bd-radius-xl);
+
+  width: 56px;
+  height: 56px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+}

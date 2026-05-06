@@ -1,0 +1,10 @@
+<button
+  matIconButton
+  [type]="type()"
+  [disabled]="disabled()"
+  [attr.aria-label]="ariaLabel()"
+  [attr.data-tone]="tone()"
+  class="bd-icon-button"
+>
+  <mat-icon>{{ icon() }}</mat-icon>
+</button>

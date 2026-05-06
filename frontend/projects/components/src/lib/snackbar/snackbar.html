@@ -1,0 +1,10 @@
+<span class="bd-snackbar__message">{{ data.message }}</span>
+@if (data.action) {
+  <button
+    type="button"
+    class="bd-snackbar__action"
+    (click)="dismissWithAction()"
+  >
+    {{ data.action }}
+  </button>
+}

@@ -1,0 +1,23 @@
+:host {
+  display: flex;
+  align-items: center;
+  gap: var(--bd-space-3);
+  height: 24px;
+  font-family: var(--bd-font-mono);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.bd-monaco-line__num {
+  flex: 0 0 32px;
+  width: 32px;
+  text-align: right;
+  color: var(--bd-color-text-disabled);
+  user-select: none;
+}
+
+.bd-monaco-line__code {
+  flex: 1 1 auto;
+  color: var(--bd-color-text-primary);
+  white-space: pre;
+}

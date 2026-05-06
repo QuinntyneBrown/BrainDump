@@ -1,0 +1,15 @@
+<button
+  [matButton]="variant()"
+  [type]="type()"
+  [disabled]="disabled()"
+  [attr.aria-label]="ariaLabel()"
+  class="bd-button"
+>
+  @if (icon(); as i) {
+    <mat-icon>{{ i }}</mat-icon>
+  }
+  <span class="bd-button__label"><ng-content /></span>
+  @if (trailingIcon(); as i) {
+    <mat-icon iconPositionEnd>{{ i }}</mat-icon>
+  }
+</button>

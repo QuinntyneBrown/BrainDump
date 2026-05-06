@@ -1,0 +1,25 @@
+<mat-form-field
+  appearance="outline"
+  subscriptSizing="dynamic"
+  class="bd-text-field"
+>
+  @if (label(); as l) {
+    <mat-label>{{ l }}</mat-label>
+  }
+  @if (leadingIcon(); as i) {
+    <mat-icon matPrefix>{{ i }}</mat-icon>
+  }
+  <input
+    matInput
+    [type]="type()"
+    [placeholder]="placeholder()"
+    [disabled]="disabled()"
+    [(ngModel)]="value"
+  />
+  @if (trailingIcon(); as i) {
+    <mat-icon matSuffix>{{ i }}</mat-icon>
+  }
+  @if (hint(); as h) {
+    <mat-hint>{{ h }}</mat-hint>
+  }
+</mat-form-field>

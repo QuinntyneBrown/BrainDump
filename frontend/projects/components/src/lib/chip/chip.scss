@@ -1,0 +1,17 @@
+:host {
+  display: inline-flex;
+}
+
+.bd-chip {
+  --mdc-chip-container-shape-radius: var(--bd-radius-md);
+  --mdc-chip-elevated-container-color: transparent;
+  --mdc-chip-outline-color: var(--bd-color-border);
+  --mdc-chip-outline-width: 1px;
+  --mdc-chip-label-text-color: var(--bd-color-text-secondary);
+  --mdc-chip-label-text-font: var(--bd-font-body);
+  --mdc-chip-label-text-size: var(--bd-size-label-md);
+  --mdc-chip-label-text-weight: var(--bd-weight-medium);
+  --mdc-chip-container-height: 32px;
+  --mdc-chip-with-icon-icon-color: var(--bd-color-text-secondary);
+  --mdc-chip-with-icon-icon-size: 16px;
+}

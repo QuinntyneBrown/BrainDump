@@ -1,0 +1,12 @@
+@if (leadingIcon(); as i) {
+  <mat-icon class="bd-list-item__leading">{{ i }}</mat-icon>
+}
+<div class="bd-list-item__body">
+  <span class="bd-list-item__title">{{ title() }}</span>
+  @if (meta(); as m) {
+    <span class="bd-list-item__meta">{{ m }}</span>
+  }
+</div>
+@if (trailingIcon(); as i) {
+  <mat-icon class="bd-list-item__trailing">{{ i }}</mat-icon>
+}

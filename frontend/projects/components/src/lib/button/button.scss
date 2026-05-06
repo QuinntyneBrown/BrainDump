@@ -1,0 +1,26 @@
+:host {
+  display: inline-block;
+}
+
+.bd-button {
+  --mdc-filled-button-container-shape: var(--bd-radius-full);
+  --mdc-outlined-button-container-shape: var(--bd-radius-full);
+  --mdc-text-button-container-shape: var(--bd-radius-full);
+  --mdc-filled-button-label-text-tracking: 0.1px;
+  --mdc-filled-button-label-text-weight: var(--bd-weight-medium);
+  --mdc-outlined-button-label-text-weight: var(--bd-weight-medium);
+  --mdc-text-button-label-text-weight: var(--bd-weight-medium);
+
+  height: 40px;
+  font-family: var(--bd-font-body);
+  font-size: var(--bd-size-label-lg);
+}
+
+:host([data-variant='outlined']) .bd-button {
+  --mdc-outlined-button-outline-color: var(--bd-color-border);
+  --mdc-outlined-button-label-text-color: var(--bd-color-primary);
+}
+
+:host([data-variant='text']) .bd-button {
+  --mdc-text-button-label-text-color: var(--bd-color-primary);
+}

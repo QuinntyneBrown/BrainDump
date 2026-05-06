@@ -1,0 +1,2 @@
+# Local Claude Code runtime state (lock files, scheduled task data, etc.)
+.claude/

@@ -1,0 +1,13 @@
+@if (icon(); as i) {
+  <mat-icon class="bd-dialog__icon">{{ i }}</mat-icon>
+}
+<h2 mat-dialog-title class="bd-dialog__title">{{ title() }}</h2>
+<mat-dialog-content class="bd-dialog__body">
+  @if (body(); as b) {
+    <p>{{ b }}</p>
+  }
+  <ng-content select="[bdDialogContent]" />
+</mat-dialog-content>
+<mat-dialog-actions class="bd-dialog__actions" align="end">
+  <ng-content select="[bdDialogActions]" />
+</mat-dialog-actions>

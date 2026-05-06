@@ -1,0 +1,34 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  min-width: 20px;
+  padding: 0 var(--bd-space-2);
+  border-radius: var(--bd-radius-full);
+  background: var(--bd-color-primary-container);
+  color: var(--bd-color-primary);
+  font-family: var(--bd-font-body);
+  font-size: var(--bd-size-label-sm);
+  font-weight: var(--bd-weight-semibold);
+  line-height: 1;
+}
+
+:host([data-tone='error']) {
+  background: var(--bd-color-error-container);
+  color: var(--bd-color-error);
+}
+
+:host([data-tone='success']) {
+  background: rgba(127, 212, 145, 0.18);
+  color: var(--bd-color-success);
+}
+
+:host([data-tone='warning']) {
+  background: rgba(242, 201, 76, 0.18);
+  color: var(--bd-color-warning);
+}
+
+.bd-badge__count {
+  display: inline-block;
+}

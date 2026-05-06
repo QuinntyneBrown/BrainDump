@@ -1,0 +1,16 @@
+<mat-chip
+  [disabled]="disabled()"
+  [removable]="removable()"
+  (removed)="removed.emit()"
+  class="bd-chip"
+>
+  @if (icon(); as i) {
+    <mat-icon matChipAvatar>{{ i }}</mat-icon>
+  }
+  {{ label() }}
+  @if (removable()) {
+    <button matChipRemove [attr.aria-label]="'Remove ' + label()">
+      <mat-icon>cancel</mat-icon>
+    </button>
+  }
+</mat-chip>

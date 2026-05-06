@@ -1,0 +1,130 @@
+@use '@angular/material' as mat;
+@use './tokens' as t;
+
+// Customizes Angular Material's M3 theme to match the brain-dump design system.
+// Consume from a global stylesheet:
+//
+//   @use 'components/theme' as bd-theme;
+//   @include bd-theme.bd-theme();
+
+@mixin bd-theme() {
+  html {
+    @include mat.theme((
+      color: (
+        primary: mat.$blue-palette,
+        tertiary: mat.$violet-palette,
+        theme-type: dark,
+      ),
+      typography: (
+        plain-family: t.$font-body,
+        brand-family: t.$font-display,
+      ),
+      density: 0,
+    ));
+
+    // Override M3 sys tokens with the design system's exact values.
+    --mat-sys-primary: #{t.$color-primary};
+    --mat-sys-on-primary: #{t.$color-on-primary};
+    --mat-sys-primary-container: #{t.$color-primary-container};
+    --mat-sys-on-primary-container: #{t.$color-primary};
+    --mat-sys-secondary: #{t.$color-primary};
+    --mat-sys-on-secondary: #{t.$color-on-primary};
+    --mat-sys-secondary-container: #{t.$color-primary-container};
+    --mat-sys-on-secondary-container: #{t.$color-primary};
+    --mat-sys-background: #{t.$color-bg};
+    --mat-sys-on-background: #{t.$color-text-primary};
+    --mat-sys-surface: #{t.$color-surface};
+    --mat-sys-surface-dim: #{t.$color-bg};
+    --mat-sys-surface-bright: #{t.$color-surface-3};
+    --mat-sys-surface-container-lowest: #{t.$color-bg};
+    --mat-sys-surface-container-low: #{t.$color-surface};
+    --mat-sys-surface-container: #{t.$color-surface-2};
+    --mat-sys-surface-container-high: #{t.$color-surface-3};
+    --mat-sys-surface-container-highest: #{t.$color-surface-3};
+    --mat-sys-on-surface: #{t.$color-text-primary};
+    --mat-sys-on-surface-variant: #{t.$color-text-secondary};
+    --mat-sys-outline: #{t.$color-border};
+    --mat-sys-outline-variant: #{t.$color-border-subtle};
+    --mat-sys-error: #{t.$color-error};
+    --mat-sys-on-error: #{t.$color-text-inverse};
+    --mat-sys-error-container: #{t.$color-error-container};
+    --mat-sys-on-error-container: #{t.$color-error};
+    --mat-sys-inverse-surface: #{t.$color-text-primary};
+    --mat-sys-inverse-on-surface: #{t.$color-text-inverse};
+    --mat-sys-scrim: #{t.$color-overlay};
+
+    // Custom CSS variables consumed by the lib's components.
+    --bd-color-bg: #{t.$color-bg};
+    --bd-color-surface: #{t.$color-surface};
+    --bd-color-surface-2: #{t.$color-surface-2};
+    --bd-color-surface-3: #{t.$color-surface-3};
+    --bd-color-border: #{t.$color-border};
+    --bd-color-border-subtle: #{t.$color-border-subtle};
+    --bd-color-primary: #{t.$color-primary};
+    --bd-color-primary-container: #{t.$color-primary-container};
+    --bd-color-primary-hover: #{t.$color-primary-hover};
+    --bd-color-on-primary: #{t.$color-on-primary};
+    --bd-color-text-primary: #{t.$color-text-primary};
+    --bd-color-text-secondary: #{t.$color-text-secondary};
+    --bd-color-text-tertiary: #{t.$color-text-tertiary};
+    --bd-color-text-disabled: #{t.$color-text-disabled};
+    --bd-color-text-inverse: #{t.$color-text-inverse};
+    --bd-color-error: #{t.$color-error};
+    --bd-color-error-container: #{t.$color-error-container};
+    --bd-color-success: #{t.$color-success};
+    --bd-color-warning: #{t.$color-warning};
+    --bd-color-info: #{t.$color-info};
+    --bd-color-overlay: #{t.$color-overlay};
+
+    --bd-font-body: #{t.$font-body};
+    --bd-font-display: #{t.$font-display};
+    --bd-font-mono: #{t.$font-mono};
+
+    --bd-size-body-lg: #{t.$size-body-lg};
+    --bd-size-body-md: #{t.$size-body-md};
+    --bd-size-body-sm: #{t.$size-body-sm};
+    --bd-size-headline-sm: #{t.$size-headline-sm};
+    --bd-size-headline-md: #{t.$size-headline-md};
+    --bd-size-headline-lg: #{t.$size-headline-lg};
+    --bd-size-label-sm: #{t.$size-label-sm};
+    --bd-size-label-md: #{t.$size-label-md};
+    --bd-size-label-lg: #{t.$size-label-lg};
+    --bd-size-title-sm: #{t.$size-title-sm};
+    --bd-size-title-md: #{t.$size-title-md};
+    --bd-size-title-lg: #{t.$size-title-lg};
+
+    --bd-weight-regular: #{t.$weight-regular};
+    --bd-weight-medium: #{t.$weight-medium};
+    --bd-weight-semibold: #{t.$weight-semibold};
+    --bd-weight-bold: #{t.$weight-bold};
+
+    --bd-radius-sm: #{t.$radius-sm};
+    --bd-radius-md: #{t.$radius-md};
+    --bd-radius-lg: #{t.$radius-lg};
+    --bd-radius-xl: #{t.$radius-xl};
+    --bd-radius-2xl: #{t.$radius-2xl};
+    --bd-radius-full: #{t.$radius-full};
+
+    --bd-space-1: #{t.$space-1};
+    --bd-space-2: #{t.$space-2};
+    --bd-space-3: #{t.$space-3};
+    --bd-space-4: #{t.$space-4};
+    --bd-space-5: #{t.$space-5};
+    --bd-space-6: #{t.$space-6};
+    --bd-space-8: #{t.$space-8};
+    --bd-space-10: #{t.$space-10};
+    --bd-space-12: #{t.$space-12};
+
+    color-scheme: dark;
+    background: var(--bd-color-bg);
+    color: var(--bd-color-text-primary);
+    font-family: var(--bd-font-body);
+  }
+
+  body {
+    margin: 0;
+    background: var(--bd-color-bg);
+    color: var(--bd-color-text-primary);
+    font-family: var(--bd-font-body);
+  }
+}

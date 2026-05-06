@@ -1,0 +1,72 @@
+// Design tokens generated from "1 - design system.pen".
+// Edit the source design and regenerate; do not hand-tune values here.
+
+// ── Colors ──────────────────────────────────────────────────────────────
+$color-bg: #0F0F11;
+$color-border: #2A2A31;
+$color-border-subtle: #1F1F25;
+$color-error: #F2B8B5;
+$color-error-container: #3D1416;
+$color-info: #A6C8FF;
+$color-on-primary: #003062;
+$color-overlay: rgba(0, 0, 0, 0.7);
+$color-primary: #A6C8FF;
+$color-primary-container: #1A2A4A;
+$color-primary-hover: #BDD3FF;
+$color-success: #7FD491;
+$color-surface: #16161A;
+$color-surface-2: #1C1C21;
+$color-surface-3: #232329;
+$color-text-disabled: #4A4751;
+$color-text-inverse: #0F0F11;
+$color-text-primary: #E6E1E5;
+$color-text-secondary: #A8A3AD;
+$color-text-tertiary: #6E6A75;
+$color-warning: #F2C94C;
+
+// ── Typography ──────────────────────────────────────────────────────────
+$font-body: Roboto, system-ui, -apple-system, Segoe UI, sans-serif;
+$font-display: Roboto, system-ui, -apple-system, Segoe UI, sans-serif;
+$font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+$size-body-lg: 16px;
+$size-body-md: 14px;
+$size-body-sm: 12px;
+$size-display-lg: 57px;
+$size-display-md: 45px;
+$size-headline-lg: 32px;
+$size-headline-md: 28px;
+$size-headline-sm: 24px;
+$size-label-lg: 14px;
+$size-label-md: 12px;
+$size-label-sm: 11px;
+$size-title-lg: 22px;
+$size-title-md: 16px;
+$size-title-sm: 14px;
+
+$weight-regular: 400;
+$weight-medium: 500;
+$weight-semibold: 600;
+$weight-bold: 700;
+
+// ── Spacing ─────────────────────────────────────────────────────────────
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px;
+$space-5: 20px;
+$space-6: 24px;
+$space-8: 32px;
+$space-10: 40px;
+$space-12: 48px;
+$space-16: 64px;
+$space-20: 80px;
+$space-24: 96px;
+
+// ── Radii ───────────────────────────────────────────────────────────────
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$radius-xl: 16px;
+$radius-2xl: 28px;
+$radius-full: 9999px;

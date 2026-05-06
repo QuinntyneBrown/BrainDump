@@ -1,0 +1,32 @@
+:host {
+  display: block;
+}
+
+.bd-top-app-bar {
+  --mat-toolbar-container-background-color: var(--bd-color-surface);
+  --mat-toolbar-container-text-color: var(--bd-color-text-primary);
+  --mat-toolbar-standard-height: 64px;
+
+  display: flex;
+  align-items: center;
+  gap: var(--bd-space-3);
+  padding: 0 var(--bd-space-4);
+  height: 64px;
+}
+
+.bd-top-app-bar__title {
+  flex: 1 1 auto;
+  margin: 0;
+  font-family: var(--bd-font-display);
+  font-size: var(--bd-size-title-lg);
+  font-weight: var(--bd-weight-semibold);
+  letter-spacing: -0.5px;
+  color: var(--bd-color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bd-top-app-bar__spacer {
+  flex: 0 0 auto;
+}

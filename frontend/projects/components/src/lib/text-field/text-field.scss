@@ -1,0 +1,22 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.bd-text-field {
+  --mdc-outlined-text-field-container-shape: var(--bd-radius-md);
+  --mdc-outlined-text-field-outline-color: var(--bd-color-border);
+  --mdc-outlined-text-field-hover-outline-color: var(--bd-color-border);
+  --mdc-outlined-text-field-focus-outline-color: var(--bd-color-primary);
+  --mdc-outlined-text-field-input-text-color: var(--bd-color-text-primary);
+  --mdc-outlined-text-field-input-text-placeholder-color: var(--bd-color-text-tertiary);
+  --mdc-outlined-text-field-label-text-color: var(--bd-color-text-tertiary);
+  --mat-form-field-container-text-font: var(--bd-font-body);
+  --mat-form-field-container-height: 56px;
+  --mat-form-field-leading-icon-color: var(--bd-color-text-tertiary);
+  --mat-form-field-trailing-icon-color: var(--bd-color-text-tertiary);
+
+  width: 100%;
+  background: var(--bd-color-surface-2);
+  border-radius: var(--bd-radius-md);
+}

@@ -1,0 +1,7 @@
+@if (title(); as t) {
+  <h3 class="bd-card__title">{{ t }}</h3>
+}
+@if (body(); as b) {
+  <p class="bd-card__body">{{ b }}</p>
+}
+<ng-content />

@@ -1,0 +1,13 @@
+:host {
+  display: inline-flex;
+}
+
+.bd-icon-button {
+  --mdc-icon-button-state-layer-size: 40px;
+  --mdc-icon-button-icon-size: 24px;
+  --mat-icon-button-icon-color: var(--bd-color-text-secondary);
+
+  &[data-tone='primary'] {
+    --mat-icon-button-icon-color: var(--bd-color-primary);
+  }
+}
