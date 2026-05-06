@@ -39,6 +39,7 @@ interface RenderedLine {
   readonly sectionId?: number;
   readonly factId?: number;
   readonly depth?: number;
+  readonly level?: 0 | 1 | 2 | 3;
 }
 
 interface SectionSummary {
@@ -146,12 +147,14 @@ export class Home {
 
     const walk = (section: SectionDto, depth: number): void => {
       const prefix = '#'.repeat(depth + 1);
+      const level: 1 | 2 | 3 = depth === 0 ? 1 : depth === 1 ? 2 : 3;
       out.push({
         lineNumber: lineNo++,
         code: `${prefix} ${section.title}`,
         kind: 'section',
         sectionId: section.id,
         depth,
+        level,
       });
       for (const fact of factsBySection.get(section.id) ?? []) {
         out.push({

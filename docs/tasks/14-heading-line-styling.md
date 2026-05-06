@@ -1,4 +1,4 @@
-# 14 — Style heading markdown lines
+# 14 — Style heading markdown lines ✅ Completed
 
 **Audit reference:** §4.3
 **Design nodes:** `iiE0i`, `a1JhV`, `IA8Wd`, `acVFY` — `bd-monaco-line` instances with descendant override `nHkBz.fill = #A6C8FF`, `fontSize: 20` (h1) or `16` (h2), `fontWeight: $weight-semibold`.

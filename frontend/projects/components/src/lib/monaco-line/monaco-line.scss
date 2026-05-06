@@ -21,3 +21,33 @@
   color: var(--bd-color-text-primary);
   white-space: pre;
 }
+
+:host([data-level='1']) {
+  height: auto;
+
+  .bd-monaco-line__code {
+    color: var(--bd-color-primary);
+    font-size: 20px;
+    font-weight: var(--bd-weight-semibold);
+  }
+}
+
+:host([data-level='2']) {
+  height: auto;
+
+  .bd-monaco-line__code {
+    color: var(--bd-color-primary);
+    font-size: 16px;
+    font-weight: var(--bd-weight-semibold);
+  }
+}
+
+:host([data-level='3']) {
+  height: auto;
+
+  .bd-monaco-line__code {
+    color: var(--bd-color-primary);
+    font-size: 14px;
+    font-weight: var(--bd-weight-semibold);
+  }
+}

@@ -117,7 +117,11 @@
             [attr.data-section-id]="line.sectionId ?? null"
             [attr.data-fact-id]="line.factId ?? null"
           >
-            <bd-monaco-line [lineNumber]="line.lineNumber" [code]="line.code" />
+            <bd-monaco-line
+              [lineNumber]="line.lineNumber"
+              [code]="line.code"
+              [level]="line.level ?? 0"
+            />
             @if (line.kind === 'section' && line.sectionId !== undefined) {
               <bd-icon-button
                 class="home-shell__line-action"

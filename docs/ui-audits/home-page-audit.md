@@ -242,7 +242,7 @@ Design region: `r0lBi1` ("status bar"), 32 px tall, fill `$color-surface-2`, pad
 - [x] Add visibility / history / share icon buttons + Save tonal button to toolbar right
 - [x] Add 1 px divider under toolbar; remove toolbar fill
 - [x] Increase editor body padding to 48 / 80 and line gap to 8 px
-- [ ] Style heading markdown lines (#, ##) with primary blue tint and larger size
+- [x] Style heading markdown lines (#, ##) with primary blue tint and larger size
 - [ ] Add Outline panel (340 px right column)
 - [ ] Add Backlinks panel (below outline)
 - [ ] Add status bar footer (Saved/branch + lines/encoding/Ln,Col)
