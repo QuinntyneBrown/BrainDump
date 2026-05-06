@@ -15,10 +15,14 @@ public class SectionConfiguration : IEntityTypeConfiguration<Section>
         builder.Property(s => s.Title).HasColumnName("title").HasMaxLength(200).IsRequired();
         builder.Property(s => s.Position).HasColumnName("position").IsRequired();
 
+        // SQL Server forbids ON DELETE CASCADE on a self-reference (cycle/multi-path
+        // rule). DeleteSectionHandler walks descendants in code, so the DB FK only
+        // needs to refuse orphans — ClientCascade keeps EF's tracked-entity cascade
+        // semantics for in-memory/Sqlite tests without emitting CASCADE in DDL.
         builder.HasOne(s => s.Parent)
             .WithMany(s => s.Children)
             .HasForeignKey(s => s.ParentId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.ClientCascade);
 
         builder.HasIndex(s => new { s.ParentId, s.Position })
             .HasDatabaseName("IX_section_parent_id_position");
