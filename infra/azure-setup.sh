@@ -31,6 +31,16 @@ az webapp create \
   --name "$WEBAPP" --resource-group "$RG" --plan "$PLAN" \
   --runtime "DOTNETCORE:9.0" --output none
 
+step "Enabling SCM basic auth (required by webapps-deploy@v3 publish-profile flow)"
+az resource update \
+  --resource-group "$RG" \
+  --name scm \
+  --namespace Microsoft.Web \
+  --resource-type basicPublishingCredentialsPolicies \
+  --parent "sites/$WEBAPP" \
+  --set properties.allow=true \
+  --output none
+
 step "Enabling system-assigned managed identity"
 WEBAPP_PRINCIPAL_ID="$(az webapp identity assign \
   --name "$WEBAPP" --resource-group "$RG" \
