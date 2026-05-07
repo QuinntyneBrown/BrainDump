@@ -74,6 +74,23 @@
       (documentSelected)="onDocumentSelected($event)"
       data-testid="page-tree"
     />
+
+    @if (recents().length > 0) {
+      <div class="home-shell__recents" data-testid="recents">
+        <h3 class="home-shell__section-label">RECENTLY VIEWED</h3>
+        @for (r of recents(); track r.id) {
+          <button
+            type="button"
+            class="home-shell__recent-row"
+            [attr.data-recent-id]="r.id"
+            (click)="onRecentSelected(r.id)"
+          >
+            <mat-icon>description</mat-icon>
+            <span>{{ r.title }}</span>
+          </button>
+        }
+      </div>
+    }
   </bd-sidebar>
 
   <main class="home-shell__editor">

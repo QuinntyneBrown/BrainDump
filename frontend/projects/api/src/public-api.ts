@@ -10,6 +10,7 @@ export * from './lib/models/folder.dto';
 export * from './lib/models/document.dto';
 export * from './lib/models/workspace.dto';
 export * from './lib/models/tab-state.dto';
+export * from './lib/models/recent-document.dto';
 
 export * from './lib/auth/auth.service.contract';
 export * from './lib/auth/auth.service';
@@ -35,6 +36,9 @@ export * from './lib/tabs/tabs.service';
 
 export * from './lib/facts/facts.service.contract';
 export * from './lib/facts/facts.service';
+
+export * from './lib/recents/recents.service.contract';
+export * from './lib/recents/recents.service';
 
 export * from './lib/reorder/reorder.service.contract';
 export * from './lib/reorder/reorder.service';

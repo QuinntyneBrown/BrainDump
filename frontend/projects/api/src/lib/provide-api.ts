@@ -10,6 +10,8 @@ import { FoldersService } from './folders/folders.service';
 import { FOLDERS_SERVICE } from './folders/folders.service.contract';
 import { MoveServiceImpl } from './move/move.service';
 import { MOVE_SERVICE } from './move/move.service.contract';
+import { RecentsService } from './recents/recents.service';
+import { RECENTS_SERVICE } from './recents/recents.service.contract';
 import { ReorderService } from './reorder/reorder.service';
 import { REORDER_SERVICE } from './reorder/reorder.service.contract';
 import { SectionsService } from './sections/sections.service';
@@ -35,5 +37,6 @@ export function provideApi(config: ApiConfig = {}): EnvironmentProviders {
     { provide: TABS_SERVICE, useExisting: TabsService },
     { provide: FACTS_SERVICE, useExisting: FactsService },
     { provide: REORDER_SERVICE, useExisting: ReorderService },
+    { provide: RECENTS_SERVICE, useExisting: RecentsService },
   ]);
 }

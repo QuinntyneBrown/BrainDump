@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
 import {
@@ -8,6 +9,8 @@ import {
   FACTS_SERVICE,
   FactDto,
   FOLDERS_SERVICE,
+  RECENTS_SERVICE,
+  RecentDocumentDto,
   SECTIONS_SERVICE,
   SectionDto,
   TABS_SERVICE,
@@ -58,6 +61,7 @@ const EMPTY_TREE: TreeDto = { sections: [], facts: [] };
 @Component({
   selector: 'app-home',
   imports: [
+    MatIcon,
     BdTopAppBar,
     BdSideRail,
     BdSidebar,
@@ -85,10 +89,12 @@ export class Home {
   private readonly sectionsService = inject(SECTIONS_SERVICE);
   private readonly factsService = inject(FACTS_SERVICE);
   private readonly tabsService = inject(TABS_SERVICE);
+  private readonly recentsService = inject(RECENTS_SERVICE);
   private readonly dialog = inject(MatDialog);
   private readonly snackbar = inject(MatSnackBar);
 
   protected readonly workspace = signal<WorkspaceDto>({ folders: [], documents: [] });
+  protected readonly recents = signal<readonly RecentDocumentDto[]>([]);
   protected readonly panes = signal<readonly Pane[]>([{ tabs: [], activeIndex: -1 }]);
   protected readonly focusedPaneIndex = signal<0 | 1>(0);
   protected readonly loading = signal(true);
@@ -187,9 +193,29 @@ export class Home {
     { id: 'share',   icon: 'share',      ariaLabel: 'Share' },
   ];
 
+  /** Per-document throttle so quick tab switching doesn't spam /view. */
+  private readonly viewedRecently = new Map<number, number>();
+  private static readonly VIEW_THROTTLE_MS = 30_000;
+
   constructor() {
     this.loadWorkspace();
     this.loadTabs();
+    this.loadRecents();
+
+    // Whenever the focused doc changes, fire-and-forget a view ping (per
+    // L2-047 #2) and refresh the recents list so it reflects the move.
+    effect(() => {
+      const id = this.focusedDocId();
+      if (id === null) return;
+      const now = Date.now();
+      const last = this.viewedRecently.get(id) ?? 0;
+      if (now - last < Home.VIEW_THROTTLE_MS) return;
+      this.viewedRecently.set(id, now);
+      this.recentsService.recordView(id).subscribe({
+        next: () => this.loadRecents(),
+        error: () => { /* fire-and-forget */ },
+      });
+    });
 
     // Persist tab state whenever it changes — debounced 500ms.
     effect(() => {
@@ -548,6 +574,17 @@ export class Home {
         this.toast('Failed to load workspace');
       },
     });
+  }
+
+  private loadRecents(): void {
+    this.recentsService.getRecent(10).subscribe({
+      next: rows => this.recents.set(rows),
+      error: () => { /* recents are non-critical */ },
+    });
+  }
+
+  protected onRecentSelected(id: number): void {
+    this.openDocumentInPane(id, this.focusedPaneIndex());
   }
 
   private loadTabs(): void {
