@@ -235,6 +235,19 @@ export class Home {
       });
     });
 
+    // Reload backlinks whenever the focused doc changes (per L2-044).
+    effect(() => {
+      const id = this.focusedDocId();
+      if (id === null) {
+        this.backlinks.set([]);
+        return;
+      }
+      this.documentsService.getBacklinks(id).subscribe({
+        next: rows => this.backlinks.set(rows),
+        error: () => this.backlinks.set([]),
+      });
+    });
+
     // Persist tab state whenever it changes — debounced 500ms.
     effect(() => {
       const panes = this.panes();
@@ -690,6 +703,16 @@ export class Home {
   private afterMutation(docId: number, message: string): void {
     this.lastModifiedAt.set(Date.now());
     this.invalidateTree(docId);
+    // Mutating one document's body can change backlinks on whichever
+    // document its [[wiki-links]] now resolve to (or no longer resolve
+    // to). Reload backlinks for the focused doc cheaply.
+    const focusedId = this.focusedDocId();
+    if (focusedId !== null) {
+      this.documentsService.getBacklinks(focusedId).subscribe({
+        next: rows => this.backlinks.set(rows),
+        error: () => { /* non-critical */ },
+      });
+    }
     this.toast(message);
   }
 

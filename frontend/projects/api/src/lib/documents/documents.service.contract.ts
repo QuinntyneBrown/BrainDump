@@ -1,5 +1,6 @@
 import { InjectionToken } from '@angular/core';
 import { Observable } from 'rxjs';
+import { BacklinkDto } from '../models/backlink.dto';
 import { TreeDto } from '../models/tree.dto';
 
 export interface CreateDocumentRequest {
@@ -18,6 +19,7 @@ export interface IDocumentsService {
   update(id: number, request: UpdateDocumentRequest): Observable<void>;
   delete(id: number): Observable<void>;
   getTree(documentId: number): Observable<TreeDto>;
+  getBacklinks(documentId: number): Observable<readonly BacklinkDto[]>;
 }
 
 export const DOCUMENTS_SERVICE = new InjectionToken<IDocumentsService>('DOCUMENTS_SERVICE');

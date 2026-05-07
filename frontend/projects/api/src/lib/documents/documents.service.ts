@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { BacklinkDto } from '../models/backlink.dto';
 import { TreeDto } from '../models/tree.dto';
 import {
   CreateDocumentRequest,
@@ -26,5 +27,9 @@ export class DocumentsService implements IDocumentsService {
 
   getTree(documentId: number): Observable<TreeDto> {
     return this.http.get<TreeDto>(`/api/documents/${documentId}/tree`);
+  }
+
+  getBacklinks(documentId: number): Observable<readonly BacklinkDto[]> {
+    return this.http.get<readonly BacklinkDto[]>(`/api/documents/${documentId}/backlinks`);
   }
 }

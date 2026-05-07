@@ -11,6 +11,7 @@ export * from './lib/models/document.dto';
 export * from './lib/models/workspace.dto';
 export * from './lib/models/tab-state.dto';
 export * from './lib/models/recent-document.dto';
+export * from './lib/models/backlink.dto';
 
 export * from './lib/auth/auth.service.contract';
 export * from './lib/auth/auth.service';
