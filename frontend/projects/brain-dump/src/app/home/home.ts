@@ -9,6 +9,7 @@ import {
   FACTS_SERVICE,
   FactDto,
   FOLDERS_SERVICE,
+  LABELS_SERVICE,
   RECENTS_SERVICE,
   RecentDocumentDto,
   SECTIONS_SERVICE,
@@ -90,6 +91,7 @@ export class Home {
   private readonly factsService = inject(FACTS_SERVICE);
   private readonly tabsService = inject(TABS_SERVICE);
   private readonly recentsService = inject(RECENTS_SERVICE);
+  private readonly labelsService = inject(LABELS_SERVICE);
   private readonly dialog = inject(MatDialog);
   private readonly snackbar = inject(MatSnackBar);
 
@@ -99,7 +101,9 @@ export class Home {
   protected readonly focusedPaneIndex = signal<0 | 1>(0);
   protected readonly loading = signal(true);
   protected readonly searchQuery = signal('');
-  protected readonly filter = signal<'all' | 'facts' | 'wip'>('all');
+  /** Selected label filter; 'all' (special) means "no filter". */
+  protected readonly filter = signal<string>('all');
+  protected readonly workspaceLabels = signal<readonly string[]>([]);
   protected readonly lastModifiedAt = signal<number | null>(null);
 
   /** Per-document tree cache. Mutations invalidate by replacing the entry. */
@@ -141,6 +145,19 @@ export class Home {
     const id = this.focusedDocId();
     if (id === null) return '—';
     return this.workspace().documents.find(d => d.id === id)?.title ?? '—';
+  });
+
+  protected readonly activeDocLabels = computed<readonly string[]>(() => {
+    const id = this.focusedDocId();
+    if (id === null) return [];
+    return this.workspace().documents.find(d => d.id === id)?.labels ?? [];
+  });
+
+  /** Documents filtered by the selected label chip; folders are unaffected. */
+  protected readonly filteredDocuments = computed(() => {
+    const f = this.filter();
+    const docs = this.workspace().documents;
+    return f === 'all' ? docs : docs.filter(d => d.labels.includes(f));
   });
 
   protected readonly lastEditedCaption = computed(() => {
@@ -201,6 +218,7 @@ export class Home {
     this.loadWorkspace();
     this.loadTabs();
     this.loadRecents();
+    this.loadLabels();
 
     // Whenever the focused doc changes, fire-and-forget a view ping (per
     // L2-047 #2) and refresh the recents list so it reflects the move.
@@ -583,8 +601,57 @@ export class Home {
     });
   }
 
+  private loadLabels(): void {
+    this.labelsService.getAll().subscribe({
+      next: labels => this.workspaceLabels.set(labels),
+      error: () => { /* labels are non-critical */ },
+    });
+  }
+
   protected onRecentSelected(id: number): void {
     this.openDocumentInPane(id, this.focusedPaneIndex());
+  }
+
+  protected onAddLabel(): void {
+    const docId = this.focusedDocId();
+    if (docId === null) {
+      this.toast('Open a document first');
+      return;
+    }
+    this.openPrompt({
+      title: 'Add label',
+      label: 'Label',
+      placeholder: 'engineering',
+      initialValue: '',
+    }).subscribe(name => {
+      if (name === null) return;
+      const trimmed = name.trim().replace(/^#/, '');
+      if (trimmed.length === 0) return;
+      const current = this.activeDocLabels();
+      if (current.some(l => l.toLowerCase() === trimmed.toLowerCase())) return;
+      this.persistLabels(docId, [...current, trimmed]);
+    });
+  }
+
+  protected onRemoveLabel(label: string): void {
+    const docId = this.focusedDocId();
+    if (docId === null) return;
+    const next = this.activeDocLabels().filter(l => l !== label);
+    this.persistLabels(docId, next);
+  }
+
+  protected onFilterChip(label: string): void {
+    this.filter.set(label);
+  }
+
+  private persistLabels(docId: number, labels: readonly string[]): void {
+    this.labelsService.setForDocument(docId, labels).subscribe({
+      next: () => {
+        this.loadWorkspace();
+        this.loadLabels();
+      },
+      error: () => this.toast('Failed to update labels'),
+    });
   }
 
   private loadTabs(): void {

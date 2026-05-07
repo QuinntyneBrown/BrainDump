@@ -5,4 +5,5 @@ export interface DocumentDto {
   readonly position: number;
   readonly createdAt: string;
   readonly updatedAt: string;
+  readonly labels: readonly string[];
 }

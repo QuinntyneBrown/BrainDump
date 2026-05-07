@@ -52,24 +52,21 @@
     <div class="home-shell__chips" role="group" aria-label="Filter pages">
       <bd-chip
         [selected]="filter() === 'all'"
-        (click)="filter.set('all')"
+        (click)="onFilterChip('all')"
         data-testid="filter-all"
       >All</bd-chip>
-      <bd-chip
-        [selected]="filter() === 'facts'"
-        (click)="filter.set('facts')"
-        data-testid="filter-facts"
-      >#facts</bd-chip>
-      <bd-chip
-        [selected]="filter() === 'wip'"
-        (click)="filter.set('wip')"
-        data-testid="filter-wip"
-      >#wip</bd-chip>
+      @for (label of workspaceLabels(); track label) {
+        <bd-chip
+          [selected]="filter() === label"
+          (click)="onFilterChip(label)"
+          [attr.data-testid]="'filter-' + label"
+        >#{{ label }}</bd-chip>
+      }
     </div>
 
     <bd-page-tree
       [folders]="workspace().folders"
-      [documents]="workspace().documents"
+      [documents]="filteredDocuments()"
       [activeDocumentId]="focusedDocId()"
       (documentSelected)="onDocumentSelected($event)"
       data-testid="page-tree"
@@ -172,5 +169,36 @@
     />
     <hr class="home-shell__rail-divider" />
     <bd-backlinks [entries]="backlinks()" data-testid="backlinks" />
+
+    @if (focusedDocId() !== null) {
+      <hr class="home-shell__rail-divider" />
+      <div class="home-shell__details" data-testid="labels-editor">
+        <h3 class="home-shell__section-label">LABELS</h3>
+        <div class="home-shell__label-row">
+          @for (label of activeDocLabels(); track label) {
+            <span class="home-shell__label-chip" [attr.data-label]="label">
+              #{{ label }}
+              <button
+                type="button"
+                class="home-shell__label-remove"
+                aria-label="Remove label"
+                (click)="onRemoveLabel(label)"
+              >
+                <mat-icon>close</mat-icon>
+              </button>
+            </span>
+          }
+          <button
+            type="button"
+            class="home-shell__label-add"
+            (click)="onAddLabel()"
+            data-testid="add-label"
+          >
+            <mat-icon>add</mat-icon>
+            <span>Add label</span>
+          </button>
+        </div>
+      </div>
+    }
   </aside>
 </div>

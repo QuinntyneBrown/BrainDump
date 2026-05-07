@@ -25,6 +25,9 @@ export * from './lib/documents/documents.service';
 export * from './lib/folders/folders.service.contract';
 export * from './lib/folders/folders.service';
 
+export * from './lib/labels/labels.service.contract';
+export * from './lib/labels/labels.service';
+
 export * from './lib/move/move.service.contract';
 export * from './lib/move/move.service';
 

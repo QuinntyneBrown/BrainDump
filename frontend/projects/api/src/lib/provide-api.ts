@@ -8,6 +8,8 @@ import { FactsService } from './facts/facts.service';
 import { FACTS_SERVICE } from './facts/facts.service.contract';
 import { FoldersService } from './folders/folders.service';
 import { FOLDERS_SERVICE } from './folders/folders.service.contract';
+import { LabelsService } from './labels/labels.service';
+import { LABELS_SERVICE } from './labels/labels.service.contract';
 import { MoveServiceImpl } from './move/move.service';
 import { MOVE_SERVICE } from './move/move.service.contract';
 import { RecentsService } from './recents/recents.service';
@@ -38,5 +40,6 @@ export function provideApi(config: ApiConfig = {}): EnvironmentProviders {
     { provide: FACTS_SERVICE, useExisting: FactsService },
     { provide: REORDER_SERVICE, useExisting: ReorderService },
     { provide: RECENTS_SERVICE, useExisting: RecentsService },
+    { provide: LABELS_SERVICE, useExisting: LabelsService },
   ]);
 }
