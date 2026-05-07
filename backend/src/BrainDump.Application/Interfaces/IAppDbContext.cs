@@ -11,5 +11,6 @@ public interface IAppDbContext
     DbSet<Fact> Facts { get; }
     DbSet<User> Users { get; }
     DbSet<UserTabState> UserTabStates { get; }
+    DbSet<UserDocumentView> UserDocumentViews { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

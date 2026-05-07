@@ -1,5 +1,6 @@
 using BrainDump.Application.DTOs;
 using BrainDump.Application.Features.Documents;
+using BrainDump.Application.Features.Recents;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -44,5 +45,12 @@ public class DocumentsController : ControllerBase
     {
         var tree = await _mediator.Send(new GetDocumentTree(id), ct);
         return Ok(tree);
+    }
+
+    [HttpPost("{id:int}/view")]
+    public async Task<IActionResult> RecordView(int id, CancellationToken ct)
+    {
+        await _mediator.Send(new RecordView(id), ct);
+        return NoContent();
     }
 }

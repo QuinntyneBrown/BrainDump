@@ -17,15 +17,16 @@ public class TestAppDbContext : DbContext, IAppDbContext
     public DbSet<Fact> Facts => Set<Fact>();
     public DbSet<User> Users => Set<User>();
     public DbSet<UserTabState> UserTabStates => Set<UserTabState>();
+    public DbSet<UserDocumentView> UserDocumentViews => Set<UserDocumentView>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        // UserTabState's primary key is UserId, not Id, so EF Core's
-        // convention-based key discovery doesn't find one. Configure it
-        // explicitly here since this test double lives outside the
-        // Infrastructure assembly that owns the real configuration.
+        // Composite / non-Id primary keys aren't discovered by convention,
+        // so configure them inline since this test double lives outside
+        // the Infrastructure assembly that owns the real configurations.
         modelBuilder.Entity<UserTabState>().HasKey(t => t.UserId);
+        modelBuilder.Entity<UserDocumentView>().HasKey(v => new { v.UserId, v.DocumentId });
     }
 
     public static TestAppDbContext CreateInMemory()
