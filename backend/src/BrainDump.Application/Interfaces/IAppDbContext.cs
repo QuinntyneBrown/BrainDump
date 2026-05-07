@@ -9,6 +9,8 @@ public interface IAppDbContext
     DbSet<Document> Documents { get; }
     DbSet<Section> Sections { get; }
     DbSet<Fact> Facts { get; }
+    DbSet<Label> Labels { get; }
+    DbSet<DocumentLabel> DocumentLabels { get; }
     DbSet<User> Users { get; }
     DbSet<UserTabState> UserTabStates { get; }
     DbSet<UserDocumentView> UserDocumentViews { get; }

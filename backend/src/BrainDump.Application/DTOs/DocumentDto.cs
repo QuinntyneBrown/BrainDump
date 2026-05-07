@@ -6,4 +6,5 @@ public record DocumentDto(
     string Title,
     int Position,
     DateTime CreatedAt,
-    DateTime UpdatedAt);
+    DateTime UpdatedAt,
+    IReadOnlyList<string> Labels);

@@ -1,5 +1,6 @@
 using BrainDump.Application.DTOs;
 using BrainDump.Application.Features.Documents;
+using BrainDump.Application.Features.Labels;
 using BrainDump.Application.Features.Recents;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -51,6 +52,15 @@ public class DocumentsController : ControllerBase
     public async Task<IActionResult> RecordView(int id, CancellationToken ct)
     {
         await _mediator.Send(new RecordView(id), ct);
+        return NoContent();
+    }
+
+    public record SetLabelsRequest(IReadOnlyList<string> Labels);
+
+    [HttpPut("{id:int}/labels")]
+    public async Task<IActionResult> SetLabels(int id, [FromBody] SetLabelsRequest body, CancellationToken ct)
+    {
+        await _mediator.Send(new SetDocumentLabels(id, body.Labels ?? Array.Empty<string>()), ct);
         return NoContent();
     }
 }

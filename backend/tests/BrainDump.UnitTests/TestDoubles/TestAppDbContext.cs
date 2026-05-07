@@ -15,6 +15,8 @@ public class TestAppDbContext : DbContext, IAppDbContext
     public DbSet<Document> Documents => Set<Document>();
     public DbSet<Section> Sections => Set<Section>();
     public DbSet<Fact> Facts => Set<Fact>();
+    public DbSet<Label> Labels => Set<Label>();
+    public DbSet<DocumentLabel> DocumentLabels => Set<DocumentLabel>();
     public DbSet<User> Users => Set<User>();
     public DbSet<UserTabState> UserTabStates => Set<UserTabState>();
     public DbSet<UserDocumentView> UserDocumentViews => Set<UserDocumentView>();
@@ -27,6 +29,7 @@ public class TestAppDbContext : DbContext, IAppDbContext
         // the Infrastructure assembly that owns the real configurations.
         modelBuilder.Entity<UserTabState>().HasKey(t => t.UserId);
         modelBuilder.Entity<UserDocumentView>().HasKey(v => new { v.UserId, v.DocumentId });
+        modelBuilder.Entity<DocumentLabel>().HasKey(dl => new { dl.DocumentId, dl.LabelId });
     }
 
     public static TestAppDbContext CreateInMemory()
