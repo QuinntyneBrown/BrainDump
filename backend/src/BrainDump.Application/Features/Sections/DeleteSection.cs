@@ -1,4 +1,5 @@
 using BrainDump.Application.Exceptions;
+using BrainDump.Application.Features.Backlinks;
 using BrainDump.Application.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -10,16 +11,19 @@ public record DeleteSection(int Id) : IRequest<Unit>;
 public class DeleteSectionHandler : IRequestHandler<DeleteSection, Unit>
 {
     private readonly IAppDbContext _db;
+    private readonly IDocumentLinkRefresher _links;
 
-    public DeleteSectionHandler(IAppDbContext db)
+    public DeleteSectionHandler(IAppDbContext db, IDocumentLinkRefresher links)
     {
         _db = db;
+        _links = links;
     }
 
     public async Task<Unit> Handle(DeleteSection request, CancellationToken cancellationToken)
     {
         var root = await _db.Sections.FirstOrDefaultAsync(s => s.Id == request.Id, cancellationToken)
             ?? throw new NotFoundException($"Section {request.Id} not found");
+        var documentId = root.DocumentId;
 
         // SQL Server can't ON DELETE CASCADE a self-reference, so we walk the
         // descendant subtree in code and remove sections breadth-first. The
@@ -45,6 +49,7 @@ public class DeleteSectionHandler : IRequestHandler<DeleteSection, Unit>
             .ToListAsync(cancellationToken);
         _db.Sections.RemoveRange(sections);
         await _db.SaveChangesAsync(cancellationToken);
+        await _links.RefreshAsync(documentId, cancellationToken);
         return Unit.Value;
     }
 }

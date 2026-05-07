@@ -43,6 +43,16 @@ public class DocumentRepository : IDocumentRepository
                 .ThenInclude(s => s.Facts)
             .FirstOrDefaultAsync(d => d.Id == id, ct);
         if (doc is null) return;
+
+        // Remove inbound document_link rows (where this doc is the target)
+        // explicitly. The source side cascades via the DB FK; the target
+        // side uses ClientCascade per the SQL Server multi-cascade-path
+        // restriction, so we clean it up here.
+        var inbound = await _db.Set<DocumentLink>()
+            .Where(dl => dl.TargetDocumentId == id)
+            .ToListAsync(ct);
+        if (inbound.Count > 0) _db.Set<DocumentLink>().RemoveRange(inbound);
+
         _db.Documents.Remove(doc);
         await _db.SaveChangesAsync(ct);
     }

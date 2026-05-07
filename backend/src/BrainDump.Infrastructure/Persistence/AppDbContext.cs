@@ -14,6 +14,7 @@ public class AppDbContext : DbContext, IAppDbContext
     public DbSet<Fact> Facts => Set<Fact>();
     public DbSet<Label> Labels => Set<Label>();
     public DbSet<DocumentLabel> DocumentLabels => Set<DocumentLabel>();
+    public DbSet<DocumentLink> DocumentLinks => Set<DocumentLink>();
     public DbSet<User> Users => Set<User>();
     public DbSet<UserTabState> UserTabStates => Set<UserTabState>();
     public DbSet<UserDocumentView> UserDocumentViews => Set<UserDocumentView>();

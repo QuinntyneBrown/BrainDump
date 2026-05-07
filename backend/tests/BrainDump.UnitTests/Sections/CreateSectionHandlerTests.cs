@@ -1,3 +1,4 @@
+using BrainDump.Application.Features.Backlinks;
 using BrainDump.Application.Features.Sections;
 using BrainDump.Domain.Entities;
 using BrainDump.UnitTests.TestDoubles;
@@ -12,7 +13,7 @@ public class CreateSectionHandlerTests
     {
         await using var db = TestAppDbContext.CreateInMemory();
         var doc = SeedDocument(db);
-        var handler = new CreateSectionHandler(db);
+        var handler = new CreateSectionHandler(db, NoopLinks);
 
         var id = await handler.Handle(
             new CreateSection(DocumentId: doc.Id, ParentId: null, Title: "Inbox", Position: 0),
@@ -33,7 +34,7 @@ public class CreateSectionHandlerTests
     {
         await using var db = TestAppDbContext.CreateInMemory();
         var doc = SeedDocument(db);
-        var handler = new CreateSectionHandler(db);
+        var handler = new CreateSectionHandler(db, NoopLinks);
 
         var parentId = await handler.Handle(new CreateSection(doc.Id, null, "Root", 0), CancellationToken.None);
         var childId = await handler.Handle(new CreateSection(doc.Id, parentId, "Child", 0), CancellationToken.None);
@@ -50,13 +51,20 @@ public class CreateSectionHandlerTests
         await using var db = TestAppDbContext.CreateInMemory();
         var docA = SeedDocument(db, "Doc A");
         var docB = SeedDocument(db, "Doc B");
-        var handler = new CreateSectionHandler(db);
+        var handler = new CreateSectionHandler(db, NoopLinks);
 
         var rootInA = await handler.Handle(
             new CreateSection(docA.Id, null, "Root A", 0), CancellationToken.None);
 
         await Assert.ThrowsAsync<BrainDump.Application.Exceptions.ValidationException>(() =>
             handler.Handle(new CreateSection(docB.Id, rootInA, "Cross-doc child", 0), CancellationToken.None));
+    }
+
+    private static IDocumentLinkRefresher NoopLinks { get; } = new NoopLinkRefresher();
+
+    private sealed class NoopLinkRefresher : IDocumentLinkRefresher
+    {
+        public Task RefreshAsync(int sourceDocumentId, CancellationToken ct = default) => Task.CompletedTask;
     }
 
     private static Document SeedDocument(TestAppDbContext db, string title = "Doc")

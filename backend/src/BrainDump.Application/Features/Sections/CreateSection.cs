@@ -1,4 +1,5 @@
 using BrainDump.Application.Exceptions;
+using BrainDump.Application.Features.Backlinks;
 using BrainDump.Application.Interfaces;
 using BrainDump.Domain.Entities;
 using MediatR;
@@ -11,10 +12,12 @@ public record CreateSection(int DocumentId, int? ParentId, string Title, int Pos
 public class CreateSectionHandler : IRequestHandler<CreateSection, int>
 {
     private readonly IAppDbContext _db;
+    private readonly IDocumentLinkRefresher _links;
 
-    public CreateSectionHandler(IAppDbContext db)
+    public CreateSectionHandler(IAppDbContext db, IDocumentLinkRefresher links)
     {
         _db = db;
+        _links = links;
     }
 
     public async Task<int> Handle(CreateSection request, CancellationToken cancellationToken)
@@ -41,6 +44,7 @@ public class CreateSectionHandler : IRequestHandler<CreateSection, int>
 
         _db.Sections.Add(section);
         await _db.SaveChangesAsync(cancellationToken);
+        await _links.RefreshAsync(request.DocumentId, cancellationToken);
         return section.Id;
     }
 }

@@ -1,4 +1,5 @@
 using BrainDump.Application.DTOs;
+using BrainDump.Application.Features.Backlinks;
 using BrainDump.Application.Features.Documents;
 using BrainDump.Application.Features.Labels;
 using BrainDump.Application.Features.Recents;
@@ -62,5 +63,12 @@ public class DocumentsController : ControllerBase
     {
         await _mediator.Send(new SetDocumentLabels(id, body.Labels ?? Array.Empty<string>()), ct);
         return NoContent();
+    }
+
+    [HttpGet("{id:int}/backlinks")]
+    public async Task<ActionResult<IReadOnlyList<BacklinkDto>>> GetBacklinks(int id, CancellationToken ct)
+    {
+        var rows = await _mediator.Send(new GetBacklinks(id), ct);
+        return Ok(rows);
     }
 }

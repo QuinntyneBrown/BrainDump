@@ -1,3 +1,4 @@
+using BrainDump.Application.Features.Backlinks;
 using BrainDump.Application.Interfaces;
 using BrainDump.Infrastructure.Auth;
 using BrainDump.Infrastructure.Persistence;
@@ -43,6 +44,7 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IFolderRepository, FolderRepository>();
         services.AddScoped<IDocumentRepository, DocumentRepository>();
+        services.AddScoped<IDocumentLinkRefresher, DocumentLinkRefresher>();
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
         services.AddScoped<ICurrentUser, CurrentUserAccessor>();
 

@@ -17,6 +17,7 @@ public class TestAppDbContext : DbContext, IAppDbContext
     public DbSet<Fact> Facts => Set<Fact>();
     public DbSet<Label> Labels => Set<Label>();
     public DbSet<DocumentLabel> DocumentLabels => Set<DocumentLabel>();
+    public DbSet<DocumentLink> DocumentLinks => Set<DocumentLink>();
     public DbSet<User> Users => Set<User>();
     public DbSet<UserTabState> UserTabStates => Set<UserTabState>();
     public DbSet<UserDocumentView> UserDocumentViews => Set<UserDocumentView>();
@@ -30,6 +31,7 @@ public class TestAppDbContext : DbContext, IAppDbContext
         modelBuilder.Entity<UserTabState>().HasKey(t => t.UserId);
         modelBuilder.Entity<UserDocumentView>().HasKey(v => new { v.UserId, v.DocumentId });
         modelBuilder.Entity<DocumentLabel>().HasKey(dl => new { dl.DocumentId, dl.LabelId });
+        modelBuilder.Entity<DocumentLink>().HasKey(dl => new { dl.SourceDocumentId, dl.TargetDocumentId });
     }
 
     public static TestAppDbContext CreateInMemory()

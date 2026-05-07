@@ -1,4 +1,5 @@
 using BrainDump.Application.Exceptions;
+using BrainDump.Application.Features.Backlinks;
 using BrainDump.Application.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -10,10 +11,12 @@ public record UpdateSection(int Id, int? ParentId, string Title, int Position) :
 public class UpdateSectionHandler : IRequestHandler<UpdateSection, Unit>
 {
     private readonly IAppDbContext _db;
+    private readonly IDocumentLinkRefresher _links;
 
-    public UpdateSectionHandler(IAppDbContext db)
+    public UpdateSectionHandler(IAppDbContext db, IDocumentLinkRefresher links)
     {
         _db = db;
+        _links = links;
     }
 
     public async Task<Unit> Handle(UpdateSection request, CancellationToken cancellationToken)
@@ -26,6 +29,7 @@ public class UpdateSectionHandler : IRequestHandler<UpdateSection, Unit>
         section.Position = request.Position;
 
         await _db.SaveChangesAsync(cancellationToken);
+        await _links.RefreshAsync(section.DocumentId, cancellationToken);
         return Unit.Value;
     }
 }

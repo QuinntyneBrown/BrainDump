@@ -11,6 +11,7 @@ public interface IAppDbContext
     DbSet<Fact> Facts { get; }
     DbSet<Label> Labels { get; }
     DbSet<DocumentLabel> DocumentLabels { get; }
+    DbSet<DocumentLink> DocumentLinks { get; }
     DbSet<User> Users { get; }
     DbSet<UserTabState> UserTabStates { get; }
     DbSet<UserDocumentView> UserDocumentViews { get; }
